@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Secrets and local environment. Never commit real credentials.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Expo / React Native build output
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native projects (regenerate with prebuild; do not edit by hand)
+/android
+/ios
+
+# Native build artifacts
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Metro / Haste
+.metro-health-check*
+
+# Testing
+coverage/
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# Editor and OS
+.DS_Store
+Thumbs.db
