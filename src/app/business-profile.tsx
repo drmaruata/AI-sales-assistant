@@ -1,8 +1,15 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { ActionButton, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
+import {
+  ActionButton,
+  BackLink,
+  Chip,
+  PageHeading,
+  PreviewNotice,
+  SalesScreen,
+} from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { usePreviewLeads } from '@/features/leads/PreviewLeadsProvider';
 import type { BusinessProfile } from '@/features/leads/preview-data';
@@ -36,6 +43,7 @@ export default function BusinessProfileScreen() {
   return (
     <SalesScreen padded={false}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <BackLink label="Settings" onPress={() => router.back()} />
         <PageHeading
           title="Business profile"
           subtitle="Keep the facts used in reply drafts accurate."
@@ -70,28 +78,14 @@ export default function BusinessProfileScreen() {
         ))}
         <Text style={[styles.label, { color: theme.text }]}>Preferred reply tone</Text>
         <View style={styles.tones}>
-          {(['Friendly', 'Professional', 'Concise'] as const).map((tone) => {
-            const selected = values.tone === tone;
-            return (
-              <Pressable
-                key={tone}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={() => update('tone', tone)}
-                style={[
-                  styles.tone,
-                  {
-                    backgroundColor: selected ? theme.accentSoft : theme.surface,
-                    borderColor: selected ? theme.accent : theme.border,
-                  },
-                ]}
-              >
-                <Text style={[styles.toneText, { color: selected ? theme.accent : theme.text }]}>
-                  {tone}
-                </Text>
-              </Pressable>
-            );
-          })}
+          {(['Friendly', 'Professional', 'Concise'] as const).map((tone) => (
+            <Chip
+              key={tone}
+              label={tone}
+              selected={values.tone === tone}
+              onPress={() => update('tone', tone)}
+            />
+          ))}
         </View>
         <ActionButton label="Save preview profile" onPress={save} />
       </ScrollView>
@@ -120,12 +114,4 @@ const styles = StyleSheet.create({
   },
   multiline: { minHeight: 88 },
   tones: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl },
-  tone: {
-    minHeight: 44,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-  },
-  toneText: { fontSize: 13, fontWeight: '600' },
 });

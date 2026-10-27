@@ -1,18 +1,17 @@
 import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { ActionButton, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
-import { useTheme } from '@/components/ui';
+import {
+  ActionButton,
+  BackLink,
+  PageHeading,
+  PreviewNotice,
+  SalesScreen,
+} from '@/components/sales-ui';
+import { Field, useTheme } from '@/components/ui';
 import { usePreviewLeads } from '@/features/leads/PreviewLeadsProvider';
-import { radius, spacing, typography } from '@/theme';
+import { spacing, typography } from '@/theme';
 
 export default function EditLeadScreen() {
   const { colors: theme } = useTheme();
@@ -54,6 +53,7 @@ export default function EditLeadScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <BackLink label={lead?.name ?? 'Leads'} onPress={() => router.back()} />
           <PageHeading title="Edit lead" subtitle="Update the details you have." />
           <PreviewNotice />
           {!lead ? (
@@ -82,17 +82,12 @@ export default function EditLeadScreen() {
               placeholder: 'What are they looking for?',
             },
           ].map((field) => (
-            <TextInput
+            <Field
               key={field.label}
-              accessibilityLabel={field.label}
+              label={field.label}
               value={field.value}
               onChangeText={field.change}
               placeholder={field.placeholder}
-              placeholderTextColor={theme.textSecondary}
-              style={[
-                styles.input,
-                { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
-              ]}
             />
           ))}
           {error ? (
@@ -110,13 +105,5 @@ export default function EditLeadScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
-  input: {
-    minHeight: 48,
-    borderWidth: 1,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-    fontSize: 15,
-  },
   error: { ...typography.caption, marginBottom: spacing.md },
 });

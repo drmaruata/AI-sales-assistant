@@ -1,22 +1,18 @@
-import { useCallback } from 'react';
 import { router } from 'expo-router';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  LeadAvatar,
-  LeadRow,
-  MetricCard,
-  PageHeading,
-  PreviewLabel,
-  PreviewNotice,
-  SalesScreen,
-  SectionHeading,
-} from '@/components/sales-ui';
+import { LeadRow, MetricCard, SalesScreen, SectionHeading } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { usePreviewLeads } from '@/features/leads/PreviewLeadsProvider';
-import type { Lead } from '@/features/leads/preview-data';
-import { spacing, typography } from '@/theme';
+import { radius, spacing, TAB_BAR_CLEARANCE, typography } from '@/theme';
+
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
 
 export default function HomeScreen() {
   const { colors: theme } = useTheme();
@@ -24,149 +20,107 @@ export default function HomeScreen() {
   const { leads, followUps, businessProfile } = usePreviewLeads();
   const activeLeads = leads.filter((lead) => !lead.archived);
   const pendingFollowUps = followUps.filter((item) => item.status === 'Pending');
-  const attentionLeads = activeLeads.filter((lead) => lead.followUp);
-  const recentActivity = activeLeads
-    .flatMap((lead) =>
-      (lead.notes ?? []).map((note) => ({ ...note, leadName: lead.name, leadId: lead.id })),
-    )
-    .slice(0, 3);
-
-  const openLead = useCallback((lead: Lead) => {
-    router.push(`/lead/${lead.id}`);
-  }, []);
-
-  const renderLead = useCallback(
-    ({ item }: { item: Lead }) => <LeadRow lead={item} compact onPress={() => openLead(item)} />,
-    [openLead],
-  );
-
-  const Header = (
-    <View>
-      <PageHeading
-        title="Good morning"
-        subtitle={businessProfile.name || 'Welcome back to your workspace'}
-        right={<LeadAvatar name={session?.user.email ?? 'Your profile'} size={44} />}
-      />
-      <PreviewLabel />
-      <PreviewNotice />
-      <View style={styles.metrics}>
-        <MetricCard label="Open leads" value={activeLeads.length} detail="In your pipeline" />
-        <MetricCard
-          label="Overdue"
-          value={
-            pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('overdue'))
-              .length
-          }
-          detail="No overdue sample items"
-          tone="warning"
-        />
-        <MetricCard
-          label="Due today"
-          value={
-            pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('today')).length
-          }
-          detail="Keep the momentum"
-          tone="success"
-        />
-        <MetricCard
-          label="Qualified"
-          value={activeLeads.filter((lead) => lead.stage === 'Qualified').length}
-          detail="Ready to progress"
-        />
-      </View>
-      <SectionHeading
-        title="Needs attention"
-        action="Follow-ups"
-        onAction={() => router.push('/follow-ups')}
-      />
-    </View>
-  );
+  const overdue = pendingFollowUps.filter((item) =>
+    item.due.toLocaleLowerCase().includes('overdue'),
+  ).length;
+  const dueToday = pendingFollowUps.filter((item) =>
+    item.due.toLocaleLowerCase().includes('today'),
+  ).length;
+  const attentionLeads = [
+    ...activeLeads.filter((lead) => lead.followUp),
+    ...activeLeads.filter((lead) => !lead.followUp),
+  ].slice(0, 4);
+  const recentNote = activeLeads
+    .flatMap((lead) => (lead.notes ?? []).map((note) => ({ lead, note })))
+    .at(-1);
+  const recentlyUpdated = activeLeads.find((lead) => lead.stage !== 'New');
+  const initials = (businessProfile.name || session?.user.email || 'A K')
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toLocaleUpperCase())
+    .join('');
 
   return (
-    <SalesScreen>
-      <FlatList
-        data={attentionLeads}
-        keyExtractor={(item) => item.id}
-        renderItem={renderLead}
-        ListHeaderComponent={Header}
-        ListEmptyComponent={
-          <Text style={[styles.empty, { color: theme.textSecondary }]}>
-            You are all caught up. Add a lead when a new enquiry comes in.
-          </Text>
-        }
-        ListFooterComponent={
-          <View>
-            <SectionHeading title="Recent activity" />
-            {recentActivity.length ? (
-              recentActivity.map((activity) => (
-                <Pressable
-                  key={activity.id}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Recent activity for ${activity.leadName}: ${activity.text}`}
-                  onPress={() => router.push(`/lead/${activity.leadId}`)}
-                  style={[styles.activity, { borderBottomColor: theme.border }]}
-                >
-                  <Text style={[styles.activityTitle, { color: theme.text }]}>
-                    {activity.leadName}
-                  </Text>
-                  <Text
-                    style={[styles.activityText, { color: theme.textSecondary }]}
-                    numberOfLines={2}
-                  >
-                    {activity.text}
-                  </Text>
-                  <Text style={[styles.activityTime, { color: theme.textSecondary }]}>
-                    {activity.createdAt}
-                  </Text>
-                </Pressable>
-              ))
-            ) : (
-              <Text style={[styles.empty, { color: theme.textSecondary }]}>
-                Notes and stage updates will show here.
-              </Text>
-            )}
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => router.push('/(tabs)/add')}
-              style={({ pressed }) => [
-                styles.addLead,
-                { backgroundColor: theme.accent, opacity: pressed ? 0.82 : 1 },
-              ]}
-            >
-              <Text style={[typography.label, { color: theme.accentText }]}>＋ Add a lead</Text>
-            </Pressable>
+    <SalesScreen padded={false}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Text style={[styles.eyebrow, { color: theme.textSecondary }]}>
+              {businessProfile.name}
+            </Text>
+            <Text style={[typography.display, { color: theme.text }]}>{greeting()}</Text>
           </View>
-        }
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open your profile"
+            onPress={() => router.push('/profile')}
+            style={({ pressed }) => [
+              styles.avatarButton,
+              {
+                backgroundColor: theme.peachSoft,
+                borderColor: theme.border,
+                opacity: pressed ? 0.8 : 1,
+              },
+            ]}
+          >
+            <Text style={[styles.avatarText, { color: theme.danger }]}>{initials}</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.metrics}>
+          <MetricCard label="Open leads" value={activeLeads.length} />
+          <MetricCard label="Overdue" value={overdue} tone="danger" />
+          <MetricCard label="Due today" value={dueToday} tone="accent" />
+        </View>
+
+        <SectionHeading title="Needs attention" />
+        <View style={styles.list}>
+          {attentionLeads.map((lead) => (
+            <LeadRow key={lead.id} lead={lead} onPress={() => router.push(`/lead/${lead.id}`)} />
+          ))}
+        </View>
+
+        <SectionHeading
+          title="Recent activity"
+          action="Analytics"
+          onAction={() => router.push('/analytics')}
+        />
+        <Text style={[styles.activity, { color: theme.textSecondary }]}>
+          {recentNote ? `Note added to ${recentNote.lead.name}` : 'No notes yet'}
+          {recentlyUpdated
+            ? ` · Stage set to ${recentlyUpdated.stage} for ${recentlyUpdated.name}`
+            : ''}
+        </Text>
+      </ScrollView>
     </SalesScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  listContent: { paddingBottom: spacing.xl },
-  metrics: {
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: TAB_BAR_CLEARANCE,
+  },
+  header: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginBottom: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
   },
-  empty: { ...typography.body, paddingVertical: spacing.lg, lineHeight: 22 },
-  activity: {
-    minHeight: 68,
-    justifyContent: 'center',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingVertical: spacing.sm,
-  },
-  activityTitle: { ...typography.label },
-  activityText: { ...typography.caption, lineHeight: 18, marginTop: 2 },
-  activityTime: { fontSize: 11, marginTop: 2 },
-  addLead: {
-    minHeight: 50,
+  headerText: { flex: 1, gap: 4 },
+  eyebrow: { ...typography.body, fontSize: 14 },
+  avatarButton: {
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
-    marginTop: spacing.xl,
+    borderRadius: radius.pill,
+    borderWidth: 1,
   },
+  avatarText: { fontSize: 18, fontWeight: '700' },
+  metrics: { flexDirection: 'row', gap: spacing.sm },
+  list: { gap: spacing.sm },
+  activity: { ...typography.body, lineHeight: 22 },
 });

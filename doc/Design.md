@@ -20,24 +20,26 @@ Suggested working name: **FollowUp AI** (placeholder; verify trademarks, domains
 
 ### Palette as implemented
 
-Tokens live in `src/theme/index.ts` as the single source of truth. Light and dark sets both exist. These values supersede the earlier suggested palette below, which was not used.
+Tokens live in `src/theme/index.ts` as the single source of truth. Light and dark sets both exist, and the lavender canvas gradient lives beside them in `canvasGradient`.
 
-| Role           | Light     | Dark      |
-| -------------- | --------- | --------- |
-| Text           | `#101418` | `#F2F5F8` |
-| Secondary text | `#5A6472` | `#A4AEBB` |
-| Background     | `#FFFFFF` | `#0E1216` |
-| Surface        | `#F5F7FA` | `#171C22` |
-| Border         | `#D8DEE7` | `#2A323B` |
-| Accent         | `#1B6CD9` | `#7FB2F5` |
-| Accent text    | `#FFFFFF` | `#0B1220` |
-| Success        | `#146C43` | `#7BD3A5` |
-| Danger         | `#B3261E` | `#F2B8B5` |
-| Disabled       | `#9AA5B1` | `#5B6672` |
+| Role           | Light                   | Dark                    |
+| -------------- | ----------------------- | ----------------------- |
+| Text           | `#16161D`               | `#F4F1FF`               |
+| Secondary text | `#6B6B7B`               | `#B0A9C9`               |
+| Faint text     | `#9A96AC`               | `#857DA3`               |
+| Background     | lavender gradient       | deep indigo gradient    |
+| Surface        | `rgba(255,255,255,.72)` | `rgba(38,32,66,.78)`    |
+| Border         | `rgba(255,255,255,.9)`  | `rgba(139,133,255,.16)` |
+| Accent         | `#4F46E5`               | `#8B85FF`               |
+| Accent text    | `#FFFFFF`               | `#12102A`               |
+| Success        | `#0F7A4D`               | `#7BD3A5`               |
+| Danger         | `#D92D20`               | `#FF9A8F`               |
+| Warning        | `#9A5B00`               | `#FFC978`               |
+| Sky            | `#0E7490`               | `#7FD4EA`               |
 
-Spacing scale is 4, 8, 12, 16, 24, 32. Corner radii are 6, 10, 16. Type ramp is title 24 semibold, heading 18 semibold, body 15 regular, label 13 semibold, caption 12 regular. Minimum touch target is 44.
+Spacing scale is 4, 8, 12, 16, 24, 32. Radius is 10, 16, 24, plus a pill radius for buttons and the tab bar. Type ramp is display 32 heavy, title 24 semibold, heading 18 semibold, body 15 regular, label 13 semibold, caption 12 regular. Minimum touch target is 44.
 
-The palette is selected from the device color scheme, so dark mode renders whenever the OS requests it. Verify WCAG AA contrast for text before release; the values above have not been contrast-tested. There is no AI accent token yet — AI surfaces are not built.
+The palette is selected from the device color scheme, so dark mode renders whenever the OS requests it, and Settings can override the preference. Verify WCAG AA contrast for text before release; the values above have not been contrast-tested. There is no AI accent token yet — AI surfaces are not built.
 
 ### Typography
 
@@ -65,15 +67,15 @@ Use platform system fonts for performance and native feel. Establish a 4-point s
 
 ## 3. Information architecture
 
-Bottom navigation:
+Bottom navigation as implemented: a floating pill bar with five tabs.
 
 1. **Home** — overview, overdue and due-today queue
-2. **Leads** — search, filters, stage views
-3. **Add** — prominent creation action
-4. **Templates** — saved replies (can be P1; hide until implemented)
-5. **Settings** — business profile, notifications, AI usage, privacy, account
+2. **Leads** — search, stage filters, active/archived
+3. **Pipeline** — stage board
+4. **Follow-ups** — due queue with complete, reschedule, cancel
+5. **More** — settings hub: profile, business profile, AI templates, team, integrations, analytics, subscription, help, data controls
 
-For the earliest MVP, use four tabs if Templates is not implemented: Home, Leads, Add, Settings. Do not expose dead or placeholder tabs.
+Add lead, lead detail, draft reply, and the hub sub-screens are routes inside the tab navigator so the bar stays visible; the bar highlights the owning tab for those routes. The add-lead form and the single-record forms (note, schedule, edit) render outside the bar and close back to the record.
 
 ## 4. Screen specifications
 

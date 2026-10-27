@@ -79,7 +79,7 @@ Never trust a client-provided `workspace_id`, `owner_id`, plan, usage count, or 
 
 ## 5. Repository structure
 
-Relevant structure after Slice 2 (tenant foundation). Directories marked `(planned)` are not created yet; the app route listing remains an abbreviated view.
+Relevant structure after the UI redesign slice. Directories marked `(planned)` are not created yet; the app route listing remains an abbreviated view.
 
 ```text
 ai-sales-assistant/
@@ -90,9 +90,16 @@ ai-sales-assistant/
 │   │   ├── _layout.tsx
 │   │   ├── sign-in.tsx
 │   │   └── sign-up.tsx
-│   └── (tabs)/
-│       ├── _layout.tsx
-│       └── index.tsx             # "Today" placeholder
+│   ├── (tabs)/
+│   │   ├── _layout.tsx           # floating five-tab bar
+│   │   ├── index.tsx             # Home
+│   │   ├── leads.tsx
+│   │   ├── pipeline.tsx
+│   │   ├── follow-ups.tsx
+│   │   ├── more.tsx              # settings hub
+│   │   ├── lead/[id].tsx         # lead detail
+│   │   └── draft-reply.tsx       # editable sample draft
+│   └── add.tsx, note.tsx, ...    # form routes outside the tab bar
 ├── src/
 │   ├── components/               # shared, reusable UI
 │   ├── features/                 # domain logic, grouped by domain

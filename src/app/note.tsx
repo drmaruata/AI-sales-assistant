@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, TextInput } from 'react-native';
 
-import { ActionButton, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
+import {
+  ActionButton,
+  BackLink,
+  PageHeading,
+  PreviewNotice,
+  SalesScreen,
+} from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { usePreviewLeads } from '@/features/leads/PreviewLeadsProvider';
 import { radius, spacing, typography } from '@/theme';
@@ -26,6 +32,7 @@ export default function AddNoteScreen() {
 
   return (
     <SalesScreen>
+      <BackLink label={lead?.name ?? 'Lead'} onPress={() => router.back()} />
       <PageHeading title="Add a note" subtitle={lead ? `For ${lead.name}` : 'Lead not found'} />
       <PreviewNotice />
       <Text style={[styles.label, { color: theme.text }]}>Note</Text>

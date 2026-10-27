@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import { useColorScheme } from 'react-native';
 
-import { colors, MIN_TOUCH_TARGET, radius, spacing, typography } from '@/theme';
+import { canvasGradient, colors, radius, shadows, spacing, typography } from '@/theme';
 import { logError } from '@/lib/errors';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
@@ -91,9 +91,15 @@ export function useTheme() {
 }
 
 export function Screen({ children, testID }: { children: ReactNode; testID?: string }) {
-  const { colors: theme } = useTheme();
+  const { colors: theme, name } = useTheme();
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]} testID={testID}>
+    <View
+      style={[
+        styles.screen,
+        { backgroundColor: theme.background, experimental_backgroundImage: canvasGradient[name] },
+      ]}
+      testID={testID}
+    >
       {children}
     </View>
   );
@@ -101,12 +107,14 @@ export function Screen({ children, testID }: { children: ReactNode; testID?: str
 
 export function Title({ children }: { children: ReactNode }) {
   const { colors: theme } = useTheme();
-  return <Text style={[typography.title, styles.title, { color: theme.text }]}>{children}</Text>;
+  return <Text style={[typography.display, styles.title, { color: theme.text }]}>{children}</Text>;
 }
 
 export function Body({ children }: { children: ReactNode }) {
   const { colors: theme } = useTheme();
-  return <Text style={[typography.body, { color: theme.text }]}>{children}</Text>;
+  return (
+    <Text style={[typography.body, styles.body, { color: theme.textSecondary }]}>{children}</Text>
+  );
 }
 
 export function FieldLabel({ children }: { children: ReactNode }) {
@@ -135,7 +143,7 @@ export function Field({ label, error, ...inputProps }: FieldProps) {
           typography.body,
           {
             color: theme.text,
-            backgroundColor: theme.surface,
+            backgroundColor: theme.field,
             borderColor: invalid ? theme.danger : theme.border,
           },
         ]}
@@ -169,8 +177,8 @@ export function Button({
 }) {
   const { colors: theme } = useTheme();
   const inactive = disabled || loading;
-  const background = variant === 'primary' ? theme.accent : 'transparent';
-  const foreground = variant === 'primary' ? theme.accentText : theme.accent;
+  const primary = variant === 'primary';
+  const foreground = primary ? theme.accentText : theme.accent;
 
   return (
     <Pressable
@@ -180,13 +188,16 @@ export function Button({
       disabled={inactive}
       onPress={onPress}
       testID={testID}
-      style={[
+      style={({ pressed }) => [
         styles.button,
-        {
-          backgroundColor: background,
-          borderColor: theme.accent,
-          opacity: inactive ? 0.6 : 1,
-        },
+        primary
+          ? { backgroundColor: theme.accent, boxShadow: shadows.accent }
+          : {
+              backgroundColor: theme.surface,
+              borderColor: theme.border,
+              borderWidth: 1,
+            },
+        { opacity: inactive ? 0.6 : pressed ? 0.8 : 1 },
       ]}
     >
       {loading ? (
@@ -221,6 +232,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
+    marginBottom: spacing.sm,
+  },
+  body: {
+    lineHeight: 22,
     marginBottom: spacing.xl,
   },
   field: {
@@ -228,25 +243,26 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   input: {
-    minHeight: MIN_TOUCH_TARGET,
+    minHeight: 52,
     borderWidth: 1,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    borderCurve: 'continuous',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   fieldError: {
     marginTop: spacing.xs,
   },
   button: {
-    minHeight: MIN_TOUCH_TARGET,
+    minHeight: 54,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.md,
-    borderWidth: 1,
+    borderRadius: radius.pill,
     paddingHorizontal: spacing.lg,
     marginTop: spacing.sm,
   },
   buttonLabel: {
+    fontSize: 16,
     textAlign: 'center',
   },
   formError: {

@@ -1,6 +1,7 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { Alert, Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
-import { PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
+import { BackLink, Card, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { radius, spacing, typography } from '@/theme';
 
@@ -19,12 +20,13 @@ export default function DataControlsScreen() {
   return (
     <SalesScreen padded={false}>
       <ScrollView contentContainerStyle={styles.content}>
+        <BackLink label="Settings" onPress={() => router.back()} />
         <PageHeading
           title="Data controls"
           subtitle="Understand what is available in this UI preview."
         />
         <PreviewNotice />
-        <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        <Card style={styles.card}>
           <Text style={[styles.heading, { color: theme.text }]}>Export your workspace</Text>
           <Text style={[styles.body, { color: theme.textSecondary }]}>
             A production export should include your workspace, leads, notes, and follow-ups in a
@@ -39,8 +41,8 @@ export default function DataControlsScreen() {
               Check export availability
             </Text>
           </Pressable>
-        </View>
-        <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
+        </Card>
+        <Card style={styles.card}>
           <Text style={[styles.heading, { color: theme.text }]}>Delete your account</Text>
           <Text style={[styles.body, { color: theme.textSecondary }]}>
             Account deletion must verify ownership, explain which workspace data is affected, and
@@ -55,7 +57,7 @@ export default function DataControlsScreen() {
               Review deletion requirements
             </Text>
           </Pressable>
-        </View>
+        </Card>
         <Text style={[styles.disclaimer, { color: theme.textSecondary }]}>
           Lead edits in this prototype live only in memory. Do not enter real customer data.
         </Text>
@@ -66,7 +68,7 @@ export default function DataControlsScreen() {
 
 const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xl },
-  card: { padding: spacing.lg, borderWidth: 1, borderRadius: radius.lg, marginBottom: spacing.md },
+  card: { marginBottom: spacing.md },
   heading: { ...typography.heading, marginBottom: spacing.sm },
   body: { ...typography.body, lineHeight: 22 },
   button: {

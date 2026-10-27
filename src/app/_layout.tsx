@@ -31,17 +31,7 @@ function RootNavigator() {
           headerShown: false,
           contentStyle: { backgroundColor: theme.background },
         }}
-      >
-        <Stack.Screen
-          name="add-modal"
-          options={{
-            presentation: 'formSheet',
-            sheetAllowedDetents: [0.7, 1],
-            sheetGrabberVisible: true,
-            contentStyle: { backgroundColor: theme.background },
-          }}
-        />
-      </Stack>
+      />
     </>
   );
 }

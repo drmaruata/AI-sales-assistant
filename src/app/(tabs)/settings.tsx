@@ -1,13 +1,12 @@
-import { Host, List, ListItem, Switch, Text as NativeText } from '@expo/ui';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Switch, Text } from 'react-native';
 
-import { PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
+import { ListRow, PageHeading, SalesScreen } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { logError } from '@/lib/errors';
-import { spacing, typography } from '@/theme';
+import { spacing, TAB_BAR_CLEARANCE, typography } from '@/theme';
 
 export default function SettingsScreen() {
   const { name, colors: theme, setThemePreference } = useTheme();
@@ -39,91 +38,89 @@ export default function SettingsScreen() {
   }
 
   return (
-    <SalesScreen>
-      <PageHeading title="Settings" subtitle="Your account and workspace" />
-      <PreviewNotice />
-      {error ? (
-        <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>
-          {error}
-        </Text>
-      ) : null}
-      <Host colorScheme={name} style={styles.nativeHost}>
-        <List>
-          <NativeText textStyle={{ ...styles.sectionHeader, color: theme.textSecondary }}>
-            APPEARANCE
-          </NativeText>
-          <ListItem
-            supportingText="Use a dark color palette throughout the app"
-            trailing={
-              <Switch
-                value={name === 'dark'}
-                onValueChange={(value) => {
-                  void onAppearanceChange(value);
-                }}
-              />
-            }
-          >
-            Dark appearance
-          </ListItem>
+    <SalesScreen padded={false}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <PageHeading title="Settings" subtitle="Your account and workspace" />
+        {error ? (
+          <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>
+            {error}
+          </Text>
+        ) : null}
 
-          <NativeText textStyle={{ ...styles.sectionHeader, color: theme.textSecondary }}>
-            ACCOUNT
-          </NativeText>
-          <ListItem
-            onPress={() => router.push('/profile')}
-            supportingText={session?.user.email ?? 'View your account details'}
-            trailing={<NativeText textStyle={{ color: theme.textSecondary }}>›</NativeText>}
-          >
-            Account
-          </ListItem>
-          <ListItem
-            onPress={() => router.push('/business-profile')}
-            supportingText="Business facts and reply tone used in draft previews"
-            trailing={<NativeText textStyle={{ color: theme.textSecondary }}>›</NativeText>}
-          >
-            Business profile
-          </ListItem>
-          <ListItem
-            onPress={() => router.push('/follow-ups')}
-            supportingText="Review upcoming and completed follow-ups"
-            trailing={<NativeText textStyle={{ color: theme.textSecondary }}>›</NativeText>}
-          >
-            Follow-ups
-          </ListItem>
+        <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>APPEARANCE</Text>
+        <ListRow
+          title="Dark appearance"
+          description="Use a dark color palette throughout the app"
+          tone="accent"
+          trailing={
+            <Switch
+              accessibilityLabel="Dark appearance"
+              value={name === 'dark'}
+              onValueChange={(value) => {
+                void onAppearanceChange(value);
+              }}
+            />
+          }
+        />
 
-          <NativeText textStyle={{ ...styles.sectionHeader, color: theme.textSecondary }}>
-            PRIVACY
-          </NativeText>
-          <ListItem
-            onPress={() => router.push('/data-controls')}
-            supportingText="Manage your preview data"
-            trailing={<NativeText textStyle={{ color: theme.textSecondary }}>›</NativeText>}
-          >
-            Privacy and data controls
-          </ListItem>
-          <ListItem
-            onPress={() => router.push('/setup-preview')}
-            supportingText="Review the onboarding flow"
-            trailing={<NativeText textStyle={{ color: theme.textSecondary }}>›</NativeText>}
-          >
-            Onboarding setup preview
-          </ListItem>
-          <ListItem
-            onPress={() => {
-              void onSignOut();
-            }}
-            supportingText={signingOut ? 'Ending your session…' : 'Sign out of this account'}
-          >
-            {signingOut ? 'Signing out…' : 'Sign out'}
-          </ListItem>
-        </List>
-      </Host>
+        <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>ACCOUNT</Text>
+        <ListRow
+          title="Account"
+          description={session?.user.email ?? 'View your account details'}
+          icon="person"
+          tone="accent"
+          onPress={() => router.push('/profile')}
+        />
+        <ListRow
+          title="Business profile"
+          description="Business facts and reply tone used in draft previews"
+          icon="storefront"
+          tone="peach"
+          onPress={() => router.push('/business-profile')}
+        />
+
+        <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>PRIVACY</Text>
+        <ListRow
+          title="Privacy and data controls"
+          description="Manage your preview data"
+          icon="settings"
+          tone="sky"
+          onPress={() => router.push('/data-controls')}
+        />
+        <ListRow
+          title="Onboarding setup preview"
+          description="Review the onboarding flow"
+          icon="sparkles"
+          tone="mint"
+          onPress={() => router.push('/setup-preview')}
+        />
+
+        <Text style={[styles.sectionHeader, { color: theme.textSecondary }]}>SESSION</Text>
+        <ListRow
+          title={signingOut ? 'Signing out…' : 'Sign out'}
+          description="Sign out of this account"
+          icon="close"
+          tone="danger"
+          onPress={signingOut ? undefined : () => void onSignOut()}
+        />
+      </ScrollView>
     </SalesScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  nativeHost: { flex: 1 },
-  sectionHeader: { fontSize: 12, fontWeight: '600', letterSpacing: 0.6 },
+  content: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: TAB_BAR_CLEARANCE,
+    gap: spacing.sm,
+  },
+  sectionHeader: {
+    ...typography.caption,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+    paddingHorizontal: spacing.xs,
+  },
   error: { ...typography.caption, marginBottom: spacing.sm },
 });

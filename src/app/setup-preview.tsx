@@ -17,7 +17,7 @@ export default function SetupPreviewScreen() {
       setStep((current) => current + 1);
       return;
     }
-    router.replace('/(tabs)/add');
+    router.replace('/add');
   }
 
   return (

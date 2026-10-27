@@ -2,11 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import { router } from 'expo-router';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { Icon } from '@/components/icon';
 import {
+  Chip,
   EmptyState,
   LeadRow,
   PageHeading,
-  PreviewNotice,
+  RoundIconButton,
   SalesScreen,
 } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
@@ -19,7 +21,7 @@ import {
   type LeadSort,
   type LeadStage,
 } from '@/features/leads/preview-data';
-import { MIN_TOUCH_TARGET, radius, spacing, typography } from '@/theme';
+import { MIN_TOUCH_TARGET, radius, spacing, TAB_BAR_CLEARANCE, typography } from '@/theme';
 
 type StageFilter = LeadStage | 'All';
 
@@ -39,38 +41,28 @@ export default function LeadsScreen() {
     router.push(`/lead/${lead.id}`);
   }, []);
 
-  const renderLead = useCallback(
-    ({ item }: { item: Lead }) => <LeadRow lead={item} onPress={() => openLead(item)} />,
-    [openLead],
-  );
-
   const filters: StageFilter[] = ['All', ...leadStages];
 
   return (
     <SalesScreen padded={false}>
       <View style={styles.content}>
         <PageHeading
-          title={showArchived ? 'Archived leads' : 'Leads'}
-          subtitle={`${filteredLeads.length} ${showArchived ? 'archived' : 'sample'} enquiries`}
+          title="Leads"
+          right={
+            <RoundIconButton icon="plus" label="Add lead" onPress={() => router.push('/add')} />
+          }
         />
-        <PreviewNotice />
-        <View
-          style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}
-        >
-          <Text
-            accessibilityElementsHidden
-            style={[styles.searchGlyph, { color: theme.textSecondary }]}
-          >
-            ⌕
-          </Text>
+
+        <View style={[styles.search, { backgroundColor: theme.field, borderColor: theme.border }]}>
+          <Icon name="search" size={20} color={theme.textSecondary} />
           <TextInput
             accessibilityLabel="Search leads"
             value={query}
             onChangeText={setQuery}
-            placeholder="Search name, business or note"
+            placeholder="Search by name"
             placeholderTextColor={theme.textSecondary}
             returnKeyType="search"
-            style={[styles.searchInput, { color: theme.text }]}
+            style={[styles.searchInput, typography.body, { color: theme.text }]}
           />
           {query.length > 0 ? (
             <Pressable
@@ -83,6 +75,7 @@ export default function LeadsScreen() {
             </Pressable>
           ) : null}
         </View>
+
         <ScrollView
           horizontal
           style={styles.filterScroll}
@@ -90,115 +83,81 @@ export default function LeadsScreen() {
           contentContainerStyle={styles.filters}
           accessibilityLabel="Filter leads by stage"
         >
-          {filters.map((filter) => {
-            const selected = stage === filter;
-            return (
-              <Pressable
-                key={filter}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={() => setStage(filter)}
-                style={[
-                  styles.filterChip,
-                  {
-                    backgroundColor: selected ? theme.accent : theme.surface,
-                    borderColor: selected ? theme.accent : theme.border,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.filterText,
-                    { color: selected ? theme.accentText : theme.textSecondary },
-                  ]}
-                >
-                  {filter}
-                  {filter === 'All'
-                    ? ` · ${showArchived ? leads.filter((lead) => lead.archived).length : leads.filter((lead) => !lead.archived).length}`
-                    : ''}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-        <View style={styles.archiveSwitch}>
-          {([false, true] as const).map((archived) => (
-            <Pressable
-              key={String(archived)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: showArchived === archived }}
-              onPress={() => setShowArchived(archived)}
-              style={[
-                styles.archiveOption,
-                {
-                  borderColor: showArchived === archived ? theme.accent : theme.border,
-                  backgroundColor: showArchived === archived ? theme.accentSoft : theme.surface,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.archiveText,
-                  { color: showArchived === archived ? theme.accent : theme.textSecondary },
-                ]}
-              >
-                {archived ? 'Archived' : 'Active'}
-              </Text>
-            </Pressable>
+          {filters.map((filter) => (
+            <Chip
+              key={filter}
+              label={filter}
+              selected={stage === filter}
+              onPress={() => setStage(filter)}
+            />
           ))}
-        </View>
-        <View style={styles.sortRow}>
-          <Text style={[styles.sortLabel, { color: theme.textSecondary }]}>Sort by</Text>
-          {(['Next follow-up', 'Recently updated'] as const).map((value) => {
-            const selected = sort === value;
-            return (
-              <Pressable
-                key={value}
-                accessibilityRole="button"
-                accessibilityState={{ selected }}
-                onPress={() => setSort(value)}
-                style={[
-                  styles.sortOption,
-                  {
-                    backgroundColor: selected ? theme.accentSoft : theme.surface,
-                    borderColor: selected ? theme.accent : theme.border,
-                  },
-                ]}
-              >
-                <Text
+        </ScrollView>
+
+        <View style={styles.controls}>
+          <View style={styles.segmented}>
+            {([false, true] as const).map((archived) => {
+              const selected = showArchived === archived;
+              return (
+                <Pressable
+                  key={String(archived)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected }}
+                  onPress={() => setShowArchived(archived)}
                   style={[
-                    styles.sortText,
-                    { color: selected ? theme.accent : theme.textSecondary },
+                    styles.segment,
+                    {
+                      backgroundColor: selected ? theme.accentSoft : 'transparent',
+                      borderColor: selected ? theme.border : 'transparent',
+                    },
                   ]}
                 >
-                  {value}
-                </Text>
-              </Pressable>
-            );
-          })}
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      { color: selected ? theme.accent : theme.textSecondary },
+                    ]}
+                  >
+                    {archived ? 'Archived' : 'Active'}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Sort by ${sort}. Tap to change.`}
+            onPress={() =>
+              setSort(sort === 'Next follow-up' ? 'Recently updated' : 'Next follow-up')
+            }
+            style={styles.sortButton}
+          >
+            <Text style={[styles.sortText, { color: theme.textSecondary }]}>Sort: {sort}</Text>
+          </Pressable>
         </View>
+
         <FlatList
           data={filteredLeads}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) =>
-            showArchived ? (
-              <View style={styles.archivedRow}>
-                <View style={styles.archivedLead}>
-                  <LeadRow lead={item} onPress={() => openLead(item)} />
-                </View>
+          renderItem={({ item }) => (
+            <View style={styles.row}>
+              <View style={styles.rowLead}>
+                <LeadRow lead={item} onPress={() => openLead(item)} />
+              </View>
+              {showArchived ? (
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel={`Restore ${item.name}`}
                   onPress={() => restoreLead(item.id)}
-                  style={[styles.restore, { borderColor: theme.border }]}
+                  style={({ pressed }) => [
+                    styles.restore,
+                    { backgroundColor: theme.accentSoft, opacity: pressed ? 0.7 : 1 },
+                  ]}
                 >
                   <Text style={[styles.restoreText, { color: theme.accent }]}>Restore</Text>
                 </Pressable>
-              </View>
-            ) : (
-              renderLead({ item })
-            )
-          }
+              ) : null}
+            </View>
+          )}
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={
@@ -221,63 +180,50 @@ export default function LeadsScreen() {
 const styles = StyleSheet.create({
   content: { flex: 1, paddingHorizontal: spacing.lg },
   search: {
-    minHeight: 48,
+    minHeight: 52,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
     borderWidth: 1,
     borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.md,
   },
-  searchGlyph: { fontSize: 23, marginRight: spacing.sm },
-  searchInput: { flex: 1, minHeight: MIN_TOUCH_TARGET, fontSize: 14 },
-  clearButton: { minHeight: MIN_TOUCH_TARGET, justifyContent: 'center', paddingLeft: spacing.sm },
+  searchInput: { flex: 1, minHeight: MIN_TOUCH_TARGET },
+  clearButton: {
+    minHeight: MIN_TOUCH_TARGET,
+    justifyContent: 'center',
+    paddingLeft: spacing.sm,
+  },
   clearText: { ...typography.label },
-  filterScroll: { flexGrow: 0, height: 52, marginBottom: spacing.md },
-  filters: { alignItems: 'center', gap: spacing.sm },
-  archiveSwitch: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
-  archiveOption: {
-    minHeight: 40,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-  },
-  archiveText: { fontSize: 12, fontWeight: '600' },
-  archivedRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  archivedLead: { flex: 1 },
-  restore: {
-    minHeight: 44,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.sm,
-  },
-  restoreText: { fontSize: 12, fontWeight: '600' },
-  sortRow: {
+  filterScroll: { flexGrow: 0, marginBottom: spacing.sm },
+  filters: { flexDirection: 'row', gap: spacing.sm, paddingRight: spacing.lg },
+  controls: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
-  sortLabel: { ...typography.caption, marginRight: spacing.xs },
-  sortOption: {
+  segmented: { flexDirection: 'row', gap: 2 },
+  segment: {
     minHeight: 36,
     justifyContent: 'center',
     borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.sm,
-  },
-  sortText: { fontSize: 11, fontWeight: '600' },
-  filterChip: {
-    minHeight: MIN_TOUCH_TARGET,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderRadius: 22,
+    borderRadius: radius.pill,
     paddingHorizontal: spacing.md,
   },
-  filterText: { fontSize: 13, fontWeight: '600' },
-  listContent: { flexGrow: 1, paddingBottom: spacing.lg },
+  segmentText: { fontSize: 12, fontWeight: '600' },
+  sortButton: { minHeight: MIN_TOUCH_TARGET, justifyContent: 'center' },
+  sortText: { ...typography.caption },
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  rowLead: { flex: 1 },
+  restore: {
+    minHeight: 40,
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+  },
+  restoreText: { fontSize: 12, fontWeight: '700' },
+  listContent: { flexGrow: 1, paddingBottom: TAB_BAR_CLEARANCE, gap: spacing.sm },
 });
