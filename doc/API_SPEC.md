@@ -91,6 +91,11 @@ Generate a human-reviewed reply draft for an authorized lead.
 
 Prefer a transaction-safe database function invoked through an authenticated Edge Function or an appropriately secured RPC.
 
+Slice 2 implements the RPC as `public.create_workspace(p_name, p_timezone)`. Its
+PostgREST parameters use those names; the caller identity and initial owner role are
+derived from the verified Supabase Auth JWT, never from request JSON. The function
+returns only the workspace ID, name, timezone, and creation timestamp.
+
 ### Request
 ```json
 {

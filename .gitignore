@@ -40,3 +40,9 @@ yarn-error.*
 # Editor and OS
 .DS_Store
 Thumbs.db
+
+# Local agent skills
+/.agents/skills/
+
+# Local image references
+/image_reference/

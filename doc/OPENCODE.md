@@ -36,6 +36,18 @@ Implement the AI Sales Assistant according to `PRD.md`, `SRS.md`, `Design.md`, `
 - RLS policies and tests using two separate users.
 - Verify no service-role key is in the client.
 
+Implementation status: `supabase/migrations/20261026152409_workspace_tenant_foundation.sql`
+creates the workspace tables, membership-based read policies, and the authenticated
+`create_workspace` RPC. The RPC derives the owner from `auth.uid()` and creates the
+workspace and owner membership in one database transaction. Authenticated clients can
+read only their own membership and cannot write workspace or membership rows directly.
+`supabase/tests/workspace_tenant_foundation.test.sql` covers two-user isolation,
+privilege boundaries, validation, and rollback on owner-membership failure. Run
+`npx supabase start`, `npx supabase db reset`, then `npx supabase test db` with Docker
+running. The workspace migration is applied to the linked development Supabase project
+as migration `20261026152409`; the pgTAP suite has not yet run against a local database.
+Leads and other tenant-owned tables remain for later slices.
+
 ### Slice 3 — leads
 - Lead CRUD, stage changes, search/filter, pagination.
 - Activities/notes and archive.

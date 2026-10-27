@@ -81,6 +81,9 @@ export default function SignInScreen() {
           textContentType="password"
           placeholder="Your password"
         />
+        <Link href="/(auth)/forgot-password" style={[styles.forgotLink, { color: theme.accent }]}>
+          Forgot password?
+        </Link>
 
         <FormError message={formError} testID="sign-in-error" />
 
@@ -100,6 +103,9 @@ export default function SignInScreen() {
             Create one
           </Link>
         </View>
+        <Link href="/setup-preview" style={[styles.previewLink, { color: theme.accent }]}>
+          Explore onboarding preview
+        </Link>
       </View>
     </Screen>
   );
@@ -110,4 +116,6 @@ const styles = StyleSheet.create({
   footer: { flexDirection: 'row', gap: 8, marginTop: 24, alignItems: 'center' },
   footerText: { fontSize: 14 },
   link: { fontSize: 14, fontWeight: '600' },
+  forgotLink: { alignSelf: 'flex-end', minHeight: 44, textAlignVertical: 'center', fontSize: 13, fontWeight: '600' },
+  previewLink: { alignSelf: 'center', marginTop: 16, minHeight: 44, textAlignVertical: 'center', fontSize: 13, fontWeight: '600' },
 });

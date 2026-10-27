@@ -200,3 +200,9 @@ Do not include phone numbers, email addresses, lead names, notes, or generated d
 - Generated drafts are clearly marked and editable.
 - No nonfunctional controls or placeholder navigation items ship.
 - Accessibility labels, contrast, text scaling, and keyboard behavior are checked on a real Android device.
+
+## 9. UI preview implementation status
+
+Before Slice 2, the current application includes a navigable UI preview for authentication and password reset; onboarding; Home; active and archived Leads; add/edit/detail; notes and stage changes; follow-up scheduling and queues; business profile; reply-draft preview; profile; and data controls. Lead, follow-up, and business-profile changes are synthetic in-memory state only. The reply screen uses sample copy, not an AI provider. Export and deletion actions explain that they are not connected; no data is exported or deleted.
+
+Do not treat this preview as an MVP release or as a substitute for the tenant-security gate. Before Slice 3, complete workspace/membership migrations, transaction-safe workspace creation, RLS, and two-user isolation tests.

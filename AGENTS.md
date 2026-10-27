@@ -2,7 +2,7 @@
 
 ## Current state and architecture
 
-The repository is no longer documentation-only. Slice 1 (project foundation) of `doc/OPENCODE.md` now exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. There is still no database schema, no RLS, and no Edge Function, so tenant isolation is not yet implemented end to end. Do not claim it is.
+The repository is no longer documentation-only. Slice 1 (project foundation) exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. Slice 2 now has a local Supabase migration for workspaces, memberships, RLS, and atomic workspace creation, plus pgTAP tests. The migration has not been applied to a hosted database, and tenant-owned product tables and their policies are not implemented yet; do not claim tenant isolation is end-to-end.
 
 The product is an Android-first Expo + React Native + TypeScript app. Supabase Auth and Postgres provide authentication and data storage; Postgres Row Level Security (RLS), using workspace membership as the authorization source of truth, enforces tenant isolation. Use Supabase Edge Functions for privileged operations and AI provider calls. Keep the client untrusted and thin. AI output is an editable, human-reviewed draft; it is not sent automatically.
 
@@ -14,7 +14,7 @@ See [README.md](README.md) for the product baseline and [doc/Architecture.md](do
 
 ## All coding Agents and sub-agents should follow these steps and do not skip these instructions - Agent workflow
 
-- Before writing or changing code, check the available skills and invoke the most relevant skill for the task. Follow its workflow and repository-specific guidance; do not invoke an unrelated skill when none applies. In this OpenCode setup, skills are listed above under Available skills and are loaded with the `skill` tool.
+- Before writing or changing code, check both project-level skills in `.agents/skills/` and globally available skills. Invoke the most relevant applicable skill(s) using the `skill` tool, and follow their workflows and repository-specific guidance. Project-level skills provide this repository's context; use them alongside relevant global skills rather than treating the global list as exhaustive. Do not invoke unrelated skills when none applies.
 - Before using a library, framework, platform API, or service whose behavior or setup matters, use the Context7 MCP (`resolve-library-id`, then `query-docs`) to identify the correct library and retrieve its current documentation. Prefer official documentation returned through Context7 over remembered APIs or secondary sources.
 - Use Context7 for the project's stack whenever documentation matters: Expo, React Native, TypeScript, Expo Router, Supabase Auth/Postgres/RLS/Edge Functions, TanStack Query, Zod, Expo Notifications, and any selected AI provider. Do not rely on remembered API versions.
 - If Context7 is unavailable or does not cover the needed topic, consult the technology or service's official documentation directly. Do not invent APIs, configuration keys, or version-specific behavior; note uncertainty when authoritative documentation cannot confirm it.

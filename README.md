@@ -14,9 +14,11 @@ Help small businesses capture enquiries, keep a clean lead pipeline, draft usefu
 
 Start with **one** segment for the first pilot (recommended: coaching/training centres, real-estate agents, or service businesses). Do not build separate workflows for all segments before validating one.
 
-### Implemented stack (Slice 1)
+### Implemented stack (Slice 1 + Slice 2 foundation)
 
-Slice 1 of `doc/OPENCODE.md` is in place: Expo SDK 58, React Native 0.88, TypeScript 6 in strict mode, Expo Router, Zod-validated environment parsing, a Supabase client with a persisted session, sign-in and sign-up screens, session state, and design tokens in `src/theme`.
+Slice 1 of `doc/OPENCODE.md` is in place: Expo SDK 58, React Native 0.88, TypeScript 6 in strict mode, Expo Router, Zod-validated environment parsing, a Supabase client with a persisted session, sign-in and sign-up screens, session state, and design tokens in `src/theme`. Slice 2 adds local Supabase configuration, workspace and membership migrations, an authenticated transaction-safe workspace-creation RPC, membership-based RLS, and pgTAP tests for two-user isolation. The workspace migration is applied to the linked development Supabase project; its pgTAP suite has not yet run against a local database.
+
+The MVP UI preview is also in place, guided by `doc/Design.md` and the supplied reference screens. It includes Home, Leads, Add, lead details/edit/notes/archive, follow-ups, business profile, reply-draft preview, onboarding, profile, password reset, and data controls. Sales data is synthetic and in-memory only; workspace/lead changes are not persisted or connected to Supabase, and the reply screen does not call an AI provider. Leads and other product tables still need RLS.
 
 ```bash
 npm install
@@ -29,9 +31,9 @@ npm test
 
 Add native packages with `npx expo install <package>`, never `npm install <package>`. See `AGENTS.md` for the full workflow and repository rules.
 
-## Proposed stack for later slices
+## Stack for remaining slices
 
-- Backend/database/auth: Supabase (Postgres, Auth, RLS, Edge Functions)
+- Backend/database/auth: Supabase (Postgres, Auth, workspace/membership RLS foundation, and Edge Functions)
 - Server state: TanStack Query or a comparable cache
 - Forms: Zod validation with controlled component state. React Hook Form was considered and dropped as more code than the case needed
 - AI: provider-agnostic server-side adapter; never expose provider keys in the app
@@ -74,4 +76,4 @@ All documents live under `doc/`.
 
 ## Next step
 
-Slice 1 is complete. Slice 2 is the secure tenant foundation: SQL migrations for workspaces and memberships, transaction-safe workspace creation, RLS policies, and isolation tests using two separate users. Implement tenant isolation before lead CRUD or AI features.
+The UI preview and Slice 2 database foundation are not production-ready. The linked development database has the workspace foundation, but local runtime validation is still pending: start Docker Desktop, run `npx supabase start`, `npx supabase db reset`, and `npx supabase test db` before connecting lead CRUD. Never apply migrations to production without review and explicit approval.

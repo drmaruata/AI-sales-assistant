@@ -23,6 +23,11 @@ Verify core workflows, tenant isolation, AI safety boundaries, notification beha
 - AI Edge Function authorization, quotas, timeout and provider failures
 - Export and deletion authorization
 
+Database migrations and RLS tests use pgTAP via `npx supabase test db` against the
+local Supabase stack. Start Docker and run `npx supabase start`, then
+`npx supabase db reset` to apply migrations before testing. The Slice 2 suite is
+`supabase/tests/workspace_tenant_foundation.test.sql`.
+
 ### UI/component tests
 - Sign-in and validation errors
 - Lead form required/optional fields

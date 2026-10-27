@@ -1,4 +1,13 @@
-import type { ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
   Pressable,
@@ -11,11 +20,74 @@ import {
 import { useColorScheme } from 'react-native';
 
 import { colors, MIN_TOUCH_TARGET, radius, spacing, typography } from '@/theme';
+import { logError } from '@/lib/errors';
+
+export type ThemePreference = 'system' | 'light' | 'dark';
+
+const THEME_PREFERENCE_KEY = '@ai-sales-assistant/theme-preference';
+const ThemePreferenceContext = createContext<{
+  preference: ThemePreference;
+  setPreference: (preference: ThemePreference) => Promise<void>;
+} | null>(null);
+
+export function ThemePreferenceProvider({ children }: { children: ReactNode }) {
+  const [preference, setPreferenceState] = useState<ThemePreference>('system');
+  const preferenceChanged = useRef(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    AsyncStorage.getItem(THEME_PREFERENCE_KEY)
+      .then((stored) => {
+        if (
+          mounted &&
+          !preferenceChanged.current &&
+          (stored === 'system' || stored === 'light' || stored === 'dark')
+        ) {
+          setPreferenceState(stored);
+        }
+      })
+      .catch((cause: unknown) => {
+        logError('load-theme-preference', cause);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const setPreference = useCallback(async (next: ThemePreference) => {
+    preferenceChanged.current = true;
+    setPreferenceState(next);
+    try {
+      await AsyncStorage.setItem(THEME_PREFERENCE_KEY, next);
+    } catch (cause) {
+      logError('save-theme-preference', cause);
+      throw cause;
+    }
+  }, []);
+
+  return (
+    <ThemePreferenceContext.Provider value={{ preference, setPreference }}>
+      {children}
+    </ThemePreferenceContext.Provider>
+  );
+}
 
 export function useTheme() {
   const scheme = useColorScheme();
-  const name = scheme === 'dark' ? 'dark' : 'light';
-  return { name, colors: colors[name] };
+  const themePreference = useContext(ThemePreferenceContext);
+  if (!themePreference) {
+    throw new Error('useTheme must be used inside ThemePreferenceProvider.');
+  }
+  const { preference, setPreference } = themePreference;
+  const name = preference === 'system' ? (scheme === 'dark' ? 'dark' : 'light') : preference;
+  return {
+    name,
+    colors: colors[name],
+    preference,
+    setThemePreference: setPreference,
+  };
 }
 
 export function Screen({

@@ -153,7 +153,9 @@ For search, begin with indexed filters and Postgres text search if needed. Avoid
 Enable RLS on every tenant-owned table. A common helper can be used if it is security-reviewed:
 
 ```sql
-create or replace function public.is_workspace_member(target_workspace_id uuid)
+create schema if not exists app_private;
+
+create or replace function app_private.is_workspace_member(target_workspace_id uuid)
 returns boolean
 language sql
 stable
@@ -172,6 +174,7 @@ $$;
 Security notes:
 - Review function owner, grants, and execution privileges.
 - Grant execute only as required.
+- Keep `app_private` out of PostgREST's exposed schemas; authenticated execution is needed for policy evaluation, not client RPC access.
 - Keep `search_path` fixed for `SECURITY DEFINER` functions.
 - Do not permit users to modify their own membership role.
 - Owner-only operations need a separate helper that checks the stored role.
@@ -184,34 +187,43 @@ alter table public.leads enable row level security;
 
 create policy "workspace members read leads"
 on public.leads for select to authenticated
-using (public.is_workspace_member(workspace_id));
+using (app_private.is_workspace_member(workspace_id));
 
 create policy "workspace members create leads"
 on public.leads for insert to authenticated
 with check (
-  public.is_workspace_member(workspace_id)
+  app_private.is_workspace_member(workspace_id)
   and created_by = (select auth.uid())
 );
 
 create policy "workspace members update leads"
 on public.leads for update to authenticated
-using (public.is_workspace_member(workspace_id))
-with check (public.is_workspace_member(workspace_id));
+using (app_private.is_workspace_member(workspace_id))
+with check (app_private.is_workspace_member(workspace_id));
 ```
 
 Do not blindly copy these policies to all tables. For example, AI usage and audit events should normally be written by trusted server-side functions and be read-only or hidden from normal client writes. Lead activity inserts must also validate that `lead_id` belongs to the same `workspace_id`; enforce this with a composite constraint or trigger, not only a UI check.
 
 ## 5. Workspace creation
 
-Create a database function or Edge Function that:
-1. authenticates the caller;
-2. validates workspace name and timezone;
-3. creates the workspace;
-4. creates the owner membership for `auth.uid()`;
-5. creates an empty business profile if desired;
-6. returns only the new workspace's public fields.
+The Slice 2 migration `supabase/migrations/20261026152409_workspace_tenant_foundation.sql`
+implements `public.create_workspace(p_name, p_timezone)` as an authenticated RPC. It
+validates the name and timezone, derives both `created_by` and the initial owner
+membership from `auth.uid()`, and creates both rows in one transaction. It does not
+accept a caller-supplied user ID or role, and returns only the workspace ID, name,
+timezone, and creation timestamp.
 
-Use a transaction so workspace and owner membership cannot become inconsistent. Do not accept `created_by` or owner identity from the client payload.
+The migration revokes direct client writes to both tables. Authenticated users can read
+workspaces where they are members and only their own membership rows. The membership
+predicate lives in the non-exposed `app_private` schema with a fixed `search_path`; the helper
+is executable only by `authenticated` so RLS can evaluate it. The membership relation
+remains the authorization source of truth. pgTAP tests for two-user isolation and
+transaction rollback live in `supabase/tests/workspace_tenant_foundation.test.sql`.
+
+This migration is applied to the linked development Supabase project as migration
+`20261026152409`. The pgTAP suite has not yet run against a local database. Leads and
+other tenant-owned tables are not yet present and must receive their own RLS policies
+in later slices.
 
 ## 6. Migration order
 

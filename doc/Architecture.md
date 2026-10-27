@@ -74,7 +74,7 @@ Never trust a client-provided `workspace_id`, `owner_id`, plan, usage count, or 
 
 ## 5. Repository structure
 
-Current structure after Slice 1 (project foundation). Directories marked `(planned)` are not created yet.
+Relevant structure after Slice 2 (tenant foundation). Directories marked `(planned)` are not created yet; the app route listing remains an abbreviated view.
 
 ```text
 ai-sales-assistant/
@@ -106,13 +106,11 @@ ai-sales-assistant/
 │   ├── unit/                     # node --test suites for pure modules
 │   ├── integration/              # (planned)
 │   └── e2e/                      # (planned)
-├── supabase/                     # (planned)
-│   ├── migrations/
-│   ├── functions/
-│   │   ├── generate-reply-draft/
-│   │   ├── export-workspace/
-│   │   └── delete-account/
-│   └── seed.sql
+├── supabase/
+│   ├── config.toml               # local Supabase CLI configuration
+│   ├── migrations/               # workspace and membership schema, RLS, RPC
+│   ├── tests/                    # pgTAP tenant-isolation tests
+│   └── functions/                # (planned) privileged server operations
 ├── assets/
 │   └── images/
 ├── doc/
@@ -133,6 +131,7 @@ Route placement rules, which differ from the original sketch:
 - Shared code imports through the `@/` alias (`src/`) or `@/assets/` (`assets/`). Do not use deep relative paths across feature boundaries.
 
 Preserve these feature boundaries when the remaining slices add leads, follow-ups, AI drafts, and the business profile.
+The Slice 2 migration is source-controlled and applied to the linked development Supabase project. It covers workspaces and memberships only; RLS for leads and other product data is still pending. The pgTAP suite has not yet run against a local database.
 
 ## 6. Data flow
 
