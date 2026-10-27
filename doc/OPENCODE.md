@@ -41,16 +41,18 @@ Implement the AI Sales Assistant according to `PRD.md`, `SRS.md`, `Design.md`, `
 Implementation status: `supabase/migrations/20261026152409_workspace_tenant_foundation.sql`
 creates the workspace tables, membership-based read policies, and the authenticated
 `create_workspace` RPC. The RPC derives the owner from `auth.uid()` and creates the
-workspace and owner membership in one database transaction. Authenticated clients can
-read only their own membership and cannot write workspace or membership rows directly.
-`supabase/tests/workspace_tenant_foundation.test.sql` covers two-user isolation,
-privilege boundaries, validation, and rollback on owner-membership failure. Run
-`npm run db:start`, `npm run db:reset`, then `npm run db:test` with Docker running.
-These scripts explicitly target the local database. By owner decision, the workspace
-migration is applied to the single linked production Supabase project as migration
-`20261026152409`; the pgTAP
-suite has not yet run against a local database. Leads and other tenant-owned tables
-remain for later slices.
+workspace and owner membership in one database transaction. `20261027180000_tenant_product_tables.sql`
+adds leads, activities, business profiles, AI drafts, follow-ups, usage, and audit
+tables with tenant RLS, composite child-ownership constraints, and explicit client
+privileges. The two pgTAP suites cover membership isolation, append-only and
+trusted-server write boundaries, and workspace/lead relationship enforcement; all 90
+assertions pass locally. Run `npm run db:start`, `npm run db:reset`, then
+`npm run db:test` with Docker running. These scripts explicitly target the local
+database. Both migrations are applied to production.
+
+GitHub Actions run #1 failed before either job received a hosted runner
+(`runner_id: 0`). Check repository Actions permissions and account billing/runner
+availability before relying on a hosted result.
 
 The root `.env` is for client-safe Expo configuration only; Expo loads every variable
 there into the dev-server process. Local Edge Function secrets belong in the ignored

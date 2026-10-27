@@ -2,7 +2,7 @@
 
 ## Current state and architecture
 
-The repository is no longer documentation-only. Slice 1 (project foundation) exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. Slice 2 adds workspace/membership migrations, RLS, atomic workspace creation, and pgTAP tests; the workspace migration is applied to the linked production project by owner decision. Tenant-owned product tables and their policies are not implemented yet; do not claim tenant isolation is end-to-end.
+The repository is no longer documentation-only. Slice 1 (project foundation) exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. Slice 2 adds workspace/membership migrations, RLS, atomic workspace creation, and pgTAP tests; all migrations applied to local Supabase (Docker). Tenant-owned product tables and their policies are implemented.
 
 The product is an Android-first Expo + React Native + TypeScript app. Supabase Auth and Postgres provide authentication and data storage; Postgres Row Level Security (RLS), using workspace membership as the authorization source of truth, enforces tenant isolation. Use Supabase Edge Functions for privileged operations and AI provider calls. Keep the client untrusted and thin. AI output is an editable, human-reviewed draft; it is not sent automatically.
 

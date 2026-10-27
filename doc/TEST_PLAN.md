@@ -28,9 +28,13 @@ Verify core workflows, tenant isolation, AI safety boundaries, notification beha
 Database migrations and RLS tests use pgTAP against the local Supabase stack. Start
 Docker, then run `npm run db:start`, `npm run db:reset`, and `npm run db:test`.
 These scripts explicitly target the local database; do not use the linked-project
-flags for routine tests. The Slice 2 suite is
-`supabase/tests/workspace_tenant_foundation.test.sql`. GitHub Actions runs the same
-local migration/test flow on pull requests and pushes to `main`.
+flags for routine tests. The workspace suite is
+`supabase/tests/workspace_tenant_foundation.test.sql`; the product-table suite is
+`supabase/tests/tenant_product_tables.test.sql`. Both suites pass all 90 assertions
+after a local reset. The product-table migration has been applied to production.
+GitHub Actions is configured to run the same flow on pull
+requests and pushes to `main`, but its first hosted run failed before runner
+assignment; enable hosted runner access before relying on hosted results.
 
 ### UI/component tests
 

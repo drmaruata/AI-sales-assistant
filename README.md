@@ -16,9 +16,9 @@ Start with **one** segment for the first pilot (recommended: coaching/training c
 
 ### Implemented stack (Slice 1 + Slice 2 foundation)
 
-Slice 1 of `doc/OPENCODE.md` is in place: Expo SDK 58, React Native 0.88, TypeScript 6 in strict mode, Expo Router, Zod-validated environment parsing, a Supabase client with a persisted session, sign-in and sign-up screens, session state, and design tokens in `src/theme`. Slice 2 adds local Supabase configuration, workspace and membership migrations, an authenticated transaction-safe workspace-creation RPC, membership-based RLS, and pgTAP tests for two-user isolation. By owner decision, the workspace migration is applied to the single linked production Supabase project; the pgTAP suite has not yet run against a local database.
+Slice 1 of `doc/OPENCODE.md` is in place: Expo SDK 58, React Native 0.88, TypeScript 6 in strict mode, Expo Router, Zod-validated environment parsing, a Supabase client with a persisted session, sign-in and sign-up screens, session state, and design tokens in `src/theme`. Slice 2 adds local Supabase configuration, an authenticated transaction-safe workspace-creation RPC, membership-based RLS, and migrations for the tenant-owned product tables. The workspace foundation migration is applied to the single production Supabase project by owner decision. Both migrations and the 90-assertion pgTAP suite pass locally; the product-table migration has not been applied to production.
 
-The MVP UI preview is also in place, guided by `doc/Design.md` and the supplied reference screens. It includes Home, Leads, Add, lead details/edit/notes/archive, follow-ups, business profile, reply-draft preview, onboarding, profile, password reset, and data controls. Sales data is synthetic and in-memory only; workspace/lead changes are not persisted or connected to Supabase, and the reply screen does not call an AI provider. Leads and other product tables still need RLS.
+The MVP UI preview is also in place, guided by `doc/Design.md` and the supplied reference screens. It includes Home, Leads, Add, lead details/edit/notes/archive, follow-ups, business profile, reply-draft preview, onboarding, profile, password reset, and data controls. Sales data is synthetic and in-memory only; workspace/lead changes are not persisted or connected to Supabase, and the reply screen does not call an AI provider. Product-table RLS migration has been applied to production. App integration remains pending.
 
 ```bash
 npm install
@@ -37,7 +37,7 @@ Add native packages with `npx expo install <package>`, never `npm install <packa
 
 ## Stack for remaining slices
 
-- Backend/database/auth: Supabase (Postgres, Auth, workspace/membership RLS foundation, and Edge Functions)
+- Backend/database/auth: Supabase (Postgres local via Docker, Auth, workspace/membership RLS foundation, and Edge Functions)
 - Server state: TanStack Query or a comparable cache
 - Forms: Zod validation with controlled component state. React Hook Form was considered and dropped as more code than the case needed
 - AI: provider-agnostic server-side adapter; never expose provider keys in the app
@@ -80,6 +80,6 @@ All documents live under `doc/`.
 
 ## Next step
 
-The UI preview and Slice 2 database foundation are not release-ready. The linked production database has the workspace foundation, but local pgTAP runtime validation is still pending: start Docker Desktop and run `npm run db:start`, `npm run db:reset`, and `npm run db:test` before connecting lead CRUD or applying further production migrations. A CI workflow is configured to run app checks, Android export, and local database tests without production secrets. Per owner decision, no separate cloud development or staging project will be created; use the local Supabase stack for isolated tests.
+The UI preview and Slice 2 database foundation are not release-ready. The linked production database now has both the workspace foundation and the tenant-owned product tables with RLS. Local pgTAP tests (90 assertions) pass. GitHub Actions run #1 failed both jobs before runner assignment (`runner_id: 0`); check repository Actions permissions and hosted-runner billing/availability, then rerun the workflow. The workflow does not use production secrets. Per owner decision, no separate cloud development or staging project will be created; use the local Supabase stack for isolated tests.
 
 Keep the root `.env` limited to client-safe `EXPO_PUBLIC_*` values because Expo loads every variable in it into the dev-server process. Edge Function local secrets belong in the ignored `supabase/functions/.env`; hosted secrets belong in Supabase's secret store. Never store real server credentials in the app environment or bundle.

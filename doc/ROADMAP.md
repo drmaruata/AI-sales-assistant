@@ -16,19 +16,20 @@ Ship a narrow workflow and validate willingness to pay before building integrati
 
 ## Phase 1 — Foundation (Week 1)
 
-**Status: Complete for the Phase 1 scope.** The workspace isolation pgTAP gate now
-passes locally (30/30 assertions). GitHub Actions is configured but its first hosted
-run is still pending. Later product tables still require their own RLS before they
-can safely store tenant data.
+**Status: Foundation and tenant-RLS gate complete.** The workspace and product
+table migrations pass the local pgTAP suites (90 assertions). The product-table
+migration has been applied to production. GitHub Actions run #1 failed before
+either hosted job received a runner (`runner_id: 0`); hosted execution remains blocked
+on repository/account runner availability.
 
 - Initialize Expo TypeScript app. **Done** — Expo SDK 58, strict TypeScript, `npm run lint`, `npm run typecheck`, `npm test`, and an Android production bundle all verified.
-- Configure lint, formatting, strict TypeScript, CI. **Implemented and locally verified** — ESLint, TypeScript, Prettier, unit tests, Expo Doctor, Android export, and local Supabase pgTAP checks pass. These checks are configured in `.github/workflows/ci.yml`; the first hosted GitHub Actions run is pending.
+- Configure lint, formatting, strict TypeScript, CI. **Implemented and locally verified** — ESLint, TypeScript, Prettier, unit tests, Expo Doctor, Android export, and local Supabase pgTAP checks pass. GitHub Actions run #1 failed before runner assignment; check repository Actions permissions and hosted-runner billing/availability, then rerun.
 - Configure Supabase environments. **Configured per owner decision** — use the single linked Supabase project as production; do not create separate cloud development or staging projects. The local Supabase stack is reserved for isolated tests.
-- Add migrations, Auth, workspace membership, RLS. **Done for the Phase 1 tenant foundation** — Supabase Auth is configured and the workspace/membership migration is applied to the production project. The local two-user pgTAP suite passed all 30 assertions for isolation, privilege boundaries, validation, and atomic creation. Later tenant-owned product tables still need their own RLS policies and tests.
+- Add migrations, Auth, workspace membership, RLS. **Implemented, tested locally, and applied to production** — Supabase Auth and the workspace/membership foundation are in place; the tenant-owned product tables now have membership RLS, trusted-server-only write boundaries, composite tenant/lead constraints, and two-user pgTAP coverage. Both suites passed all 90 assertions locally and the product-table migration is applied to production.
 - Create environment config and secret handling. **Done for the current foundation** — client configuration is Zod-validated, root `.env.example` contains only client-safe values, and the root `.env` is limited to `EXPO_PUBLIC_*` settings. Edge Function local secrets are separately ignored and templated; actual provider secrets are deferred until an Edge Function is implemented.
 - Add basic error handling and test harness. **Done for the current foundation** — stable user-safe error mapping has unit tests, and pgTAP covers the workspace tenant boundary. Integration tests for later product features remain future work.
 
-**Gate: Passed for the workspace foundation** — local pgTAP confirms cross-tenant isolation. Keep database tests isolated on the local Supabase stack; do not run destructive tests against the production project. Before adding each tenant-owned product table, add and test its RLS policies.
+**Gate: Passed for workspace and product-table RLS** — keep database tests isolated on the local Supabase stack; do not run destructive tests against production. Hosted CI remains blocked until GitHub assigns hosted runners to the workflow.
 
 ## Phase 2 — Core CRM (Weeks 2–3)
 

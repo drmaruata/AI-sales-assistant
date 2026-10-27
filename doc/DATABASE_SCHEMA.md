@@ -11,7 +11,12 @@
 - Use soft archive for leads; define hard-delete retention separately.
 - Test policies with multiple users in different workspaces.
 
-## 2. Proposed tables
+## 2. Tenant-owned tables
+
+The schema below is implemented by
+`supabase/migrations/20261027180000_tenant_product_tables.sql`. It is applied and
+tested on the local Supabase stack and has been applied to the single production
+project.
 
 ### `workspaces`
 
@@ -231,10 +236,28 @@ is executable only by `authenticated` so RLS can evaluate it. The membership rel
 remains the authorization source of truth. pgTAP tests for two-user isolation and
 transaction rollback live in `supabase/tests/workspace_tenant_foundation.test.sql`.
 
-By owner decision, this migration is applied to the single linked production Supabase
-project as migration `20261026152409`. The pgTAP suite has not yet run against a local database. Leads and
-other tenant-owned tables are not yet present and must receive their own RLS policies
-in later slices.
+By owner decision, this migration is applied to the single production Supabase project
+as migration `20261026152409`.
+
+The product-table migration enables and forces RLS on all seven tables. Members can
+read only rows in their workspaces. They can create and update leads without changing
+the workspace or creator, append (but not edit or delete) lead activities, create and
+update the single business profile, and create/update follow-ups. Leads, activities,
+profiles, and follow-ups cannot be hard-deleted by normal clients. Composite foreign
+keys ensure activities, drafts, follow-ups, and usage events cannot reference a lead
+or draft from another workspace. Completion metadata for follow-ups is stamped by a
+trigger from the authenticated identity.
+
+Authenticated clients can read workspace AI drafts and usage events but cannot write
+them; `audit_events` is not directly accessible to clients. All writes to drafts,
+usage, and audit records require trusted server-side operations. Table writes are
+restricted with SQL grants in addition to RLS, and unauthenticated users have no
+product-table privileges.
+
+`supabase/tests/tenant_product_tables.test.sql` exercises the policy and privilege
+boundaries with two workspaces and a non-member. Together with the workspace
+foundation suite, all 90 pgTAP assertions pass on the local Supabase database. The
+product-table migration has been applied to production.
 
 ## 6. Migration order
 

@@ -5,20 +5,20 @@ Priority definitions: P0 = required for pilot; P1 = next; P2 = later.
 ## Epic A — Foundation and auth (P0)
 
 - A1: Initialize Expo + TypeScript app. **Done.**
-- A2: Configure lint, formatting, type-check, tests, CI. **Implemented; CI run pending.** ESLint, Prettier, TypeScript, unit tests, Android export, and local Supabase pgTAP checks are configured. The workflow has not yet run on GitHub.
+- A2: Configure lint, formatting, type-check, tests, CI. **Implemented; hosted runner blocked.** ESLint, Prettier, TypeScript, unit tests, Android export, and local Supabase pgTAP checks pass. GitHub Actions run #1 failed before runner assignment; repository/account runner availability must be enabled before rerunning.
 - A3: Sign up, sign in, sign out, password recovery. **Partly done.** Sign-in, sign-up, and sign-out are implemented. There is no password-recovery screen.
 - A4: Persist session securely using supported Supabase/Expo guidance. **Partly done.** The session persists in AsyncStorage. The encrypted storage variant has not been implemented.
-- A5: Create workspace and owner membership transactionally. **Backend implemented; app integration pending.** The authenticated RPC creates both records atomically and is applied to development; onboarding does not call it yet.
+- A5: Create workspace and owner membership transactionally. **Backend implemented; app integration pending.** The authenticated RPC creates both records atomically and is applied to the single production project by owner decision; onboarding does not call it yet.
 - A6: Show session-expired and network-error states. **Partly done.** Screens show loading and inline error states; a session-expired path is not implemented yet.
 
 Acceptance: user can create an account and workspace; unauthorized workspace access is denied.
 
 ## Epic B — Tenant security (P0)
 
-- B1: Create workspace/member schema and policies. **Implemented for workspace foundation; applied to development.**
+- B1: Create workspace/member schema and policies. **Implemented and applied to the single production project.**
 - B2: Add membership authorization helper with safe privileges. **Implemented.**
-- B3: Add RLS policies for all tenant-owned tables. **Partly done.** Workspaces and memberships are covered; product tables are not yet implemented.
-- B4: Test two-user/two-workspace isolation. **Test suite written; runtime pass pending** because Docker is unavailable locally.
+- B3: Add RLS policies for all tenant-owned tables. **Implemented, locally tested, and applied to production.** Product tables have membership RLS, explicit grants, trusted-server-only write boundaries, and composite tenant/lead constraints.
+- B4: Test two-user/two-workspace isolation. **Passed locally.** Both pgTAP suites pass all 90 assertions after `npm run db:reset`.
 - B5: Add migration review workflow. **Partly done.** Migrations are source-controlled and CI will apply/test them locally; review and hosted rollout remain manual.
 
 Acceptance: direct API attempts to access another workspace fail.

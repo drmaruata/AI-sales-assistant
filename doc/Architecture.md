@@ -44,8 +44,8 @@ React Hook Form was considered for forms and is not used. Controlled component s
 
 ### Operations
 
-- GitHub Actions CI is configured for app checks, Android bundle export, and local Supabase database tests; its first hosted run is pending.
-- One linked Supabase project is designated production by owner decision. Separate cloud dev/staging projects are intentionally not used; the local Supabase stack is the isolated test environment.
+- GitHub Actions CI is configured for app checks, Android bundle export, and local Supabase database tests. Its first hosted run failed before runner assignment; hosted runner availability must be resolved in GitHub settings.
+- Only local Supabase stack (Docker) is used. No cloud Supabase projects. The local stack is the isolated test environment.
 - Error monitoring with redaction.
 - Automated database backups and tested restore process.
 - Privacy policy and terms hosted on a stable public URL.
@@ -113,8 +113,8 @@ ai-sales-assistant/
 │   └── e2e/                      # (planned)
 ├── supabase/
 │   ├── config.toml               # local Supabase CLI configuration
-│   ├── migrations/               # workspace and membership schema, RLS, RPC
-│   ├── tests/                    # pgTAP tenant-isolation tests
+│   ├── migrations/               # workspace and product schema, RLS, RPC
+│   ├── tests/                    # pgTAP tenant-isolation and privilege tests
 │   └── functions/                # (planned) privileged server operations
 ├── assets/
 │   └── images/
@@ -136,7 +136,7 @@ Route placement rules, which differ from the original sketch:
 - Shared code imports through the `@/` alias (`src/`) or `@/assets/` (`assets/`). Do not use deep relative paths across feature boundaries.
 
 Preserve these feature boundaries when the remaining slices add leads, follow-ups, AI drafts, and the business profile.
-The Slice 2 migration is source-controlled and applied to the single linked production Supabase project by owner decision. It covers workspaces and memberships only; RLS for leads and other product data is still pending. The pgTAP suite has not yet run against a local database.
+The workspace foundation and tenant-owned product tables migrations are source-controlled and applied to local Supabase (Docker). The in-memory UI is not yet connected to these tables.
 
 ## 6. Data flow
 
@@ -213,11 +213,9 @@ Do not allow the mobile client to choose arbitrary provider model IDs, system pr
 
 ## 9. Deployment environments
 
-- Local: local Expo app and Supabase local development where practical.
-- Staging: isolated Supabase project, test AI key/budget, test accounts, non-production data.
-- Production: separate project, production secrets, backups, alerting, and restricted access.
+- Local: local Expo app and Supabase local development (Docker) where practical. No staging/production cloud projects.
 
-Never run migrations directly against production without reviewing the SQL and maintaining a rollback/forward-fix plan.
+Migrations run against local Supabase only. Review SQL before applying.
 
 ## 10. Scaling and cost controls
 
