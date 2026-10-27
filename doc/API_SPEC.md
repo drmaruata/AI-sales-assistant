@@ -28,9 +28,11 @@ Never return SQL details, provider credentials, raw prompts, or personal data in
 ## 3. `generate-reply-draft`
 
 ### Purpose
+
 Generate a human-reviewed reply draft for an authorized lead.
 
 ### Request
+
 ```json
 {
   "workspace_id": "uuid",
@@ -43,6 +45,7 @@ Generate a human-reviewed reply draft for an authorized lead.
 ```
 
 ### Validation
+
 - `purpose`: `first_response | follow_up | answer_question | reengagement`
 - `tone`: `professional | friendly | concise`
 - `language`: supported language code
@@ -51,6 +54,7 @@ Generate a human-reviewed reply draft for an authorized lead.
 - Apply per-user and per-workspace rate limits.
 
 ### Server flow
+
 1. Validate JWT and caller.
 2. Validate payload.
 3. Check workspace membership and lead membership in that workspace.
@@ -63,6 +67,7 @@ Generate a human-reviewed reply draft for an authorized lead.
 10. Return draft and warnings.
 
 ### Success
+
 ```json
 {
   "data": {
@@ -78,6 +83,7 @@ Generate a human-reviewed reply draft for an authorized lead.
 ```
 
 ### Errors
+
 - `AUTH_REQUIRED` — no valid user session
 - `FORBIDDEN` — no workspace membership
 - `NOT_FOUND` — lead does not exist in authorized workspace
@@ -97,6 +103,7 @@ derived from the verified Supabase Auth JWT, never from request JSON. The functi
 returns only the workspace ID, name, timezone, and creation timestamp.
 
 ### Request
+
 ```json
 {
   "name": "Example Business",
@@ -109,9 +116,11 @@ The caller's user ID must be derived from the verified JWT, never accepted from 
 ## 5. `export-workspace`
 
 ### Purpose
+
 Create an export for an authorized workspace owner.
 
 ### Request
+
 ```json
 {
   "workspace_id": "uuid",
@@ -120,6 +129,7 @@ Create an export for an authorized workspace owner.
 ```
 
 Requirements:
+
 - Owner authorization required by default.
 - Export only the requested authorized workspace.
 - Escape CSV formula-injection values (e.g. cells beginning with `=`, `+`, `-`, `@`).
@@ -130,9 +140,11 @@ Requirements:
 ## 6. `delete-account`
 
 ### Purpose
+
 Start a verified account deletion workflow.
 
 Requirements:
+
 - Require fresh authentication or re-authentication.
 - Explain effects on workspace ownership, memberships, and shared data.
 - Prevent accidental deletion of the last owner without a transfer or explicit workspace deletion plan.
@@ -143,6 +155,7 @@ Requirements:
 ## 7. Future integration: official WhatsApp Business Platform
 
 Not in MVP. Before implementing:
+
 - verify current Meta eligibility, app review, permissions, templates, opt-in, and messaging-window rules;
 - use official APIs and webhooks;
 - validate webhook signatures;

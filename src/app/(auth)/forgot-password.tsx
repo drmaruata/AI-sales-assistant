@@ -27,7 +27,9 @@ export default function ForgotPasswordScreen() {
     setError(null);
     setNotice(null);
     try {
-      const { error: requestError } = await getSupabaseClient().auth.resetPasswordForEmail(parsed.data);
+      const { error: requestError } = await getSupabaseClient().auth.resetPasswordForEmail(
+        parsed.data,
+      );
       if (requestError) {
         setError(toUserMessage(requestError));
         return;

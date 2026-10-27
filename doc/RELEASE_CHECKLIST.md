@@ -1,12 +1,14 @@
 # Release Checklist
 
 ## Product
+
 - [ ] One beachhead customer segment chosen and documented.
 - [ ] Core workflow validated with pilot users.
 - [ ] Pricing and quotas tested with real buyers.
 - [ ] No nonfunctional screens or placeholder controls.
 
 ## Security
+
 - [ ] RLS enabled on every tenant-owned table.
 - [ ] Cross-tenant tests pass.
 - [ ] No privileged keys in client bundle or repository.
@@ -16,6 +18,7 @@
 - [ ] Dependency and secret scans reviewed.
 
 ## Reliability
+
 - [ ] Error monitoring configured.
 - [ ] Backups enabled.
 - [ ] Restore rehearsal completed.
@@ -24,6 +27,7 @@
 - [ ] Real-device smoke tests pass.
 
 ## Privacy and store readiness
+
 - [ ] Privacy policy reflects actual data flows and AI provider.
 - [ ] Terms and support contact published.
 - [ ] Export and deletion flows tested.
@@ -32,6 +36,7 @@
 - [ ] Notification permission and lock-screen content reviewed.
 
 ## Release evidence
+
 - [ ] Commit SHA recorded.
 - [ ] Test report attached.
 - [ ] Known defects listed with severity.

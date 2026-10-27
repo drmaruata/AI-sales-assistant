@@ -6,18 +6,18 @@ Protect customer contact information, business context, sales notes, AI drafts, 
 
 ## 2. Threat model
 
-| Threat | Example | Primary controls |
-|---|---|---|
-| Cross-tenant access | User changes a workspace or lead UUID | RLS, membership checks, isolation tests |
-| Secret exposure | AI key bundled into app | Server-side secret storage, bundle scans |
-| Prompt injection | Lead note tells model to ignore policy | Treat user content as untrusted; server-owned instructions |
-| AI fabrication | Draft invents a price or guarantee | Approved facts only, uncertainty rules, human review |
-| Abuse/cost spike | Automated AI requests exhaust quota | Rate limits, budgets, output limits, anomaly alerts |
-| Account takeover | Reused or stolen password | Auth provider controls, MFA where available, session hygiene |
-| Export leakage | Public or guessable download URL | Auth checks, short-lived signed URLs, audit events |
-| Notification exposure | Sensitive lead details on lock screen | Generic notification text by default |
-| Log leakage | Request body contains contact information | Structured redacted logging |
-| Lost device | Cached records remain on device | Minimize local persistence; secure storage for tokens |
+| Threat                | Example                                   | Primary controls                                             |
+| --------------------- | ----------------------------------------- | ------------------------------------------------------------ |
+| Cross-tenant access   | User changes a workspace or lead UUID     | RLS, membership checks, isolation tests                      |
+| Secret exposure       | AI key bundled into app                   | Server-side secret storage, bundle scans                     |
+| Prompt injection      | Lead note tells model to ignore policy    | Treat user content as untrusted; server-owned instructions   |
+| AI fabrication        | Draft invents a price or guarantee        | Approved facts only, uncertainty rules, human review         |
+| Abuse/cost spike      | Automated AI requests exhaust quota       | Rate limits, budgets, output limits, anomaly alerts          |
+| Account takeover      | Reused or stolen password                 | Auth provider controls, MFA where available, session hygiene |
+| Export leakage        | Public or guessable download URL          | Auth checks, short-lived signed URLs, audit events           |
+| Notification exposure | Sensitive lead details on lock screen     | Generic notification text by default                         |
+| Log leakage           | Request body contains contact information | Structured redacted logging                                  |
+| Lost device           | Cached records remain on device           | Minimize local persistence; secure storage for tokens        |
 
 ## 3. Data classification
 
@@ -27,6 +27,13 @@ Protect customer contact information, business context, sales notes, AI drafts, 
 - **Restricted:** authentication tokens, service-role keys, AI provider keys, signing secrets.
 
 Never place Restricted data in source control, client bundles, analytics, crash reports, or support screenshots.
+
+## 3.1 Environment and secret handling
+
+- Keep the root `.env` limited to `EXPO_PUBLIC_*` client-safe settings. Expo loads all root `.env` variables into its dev-server process, even though only public-prefixed variables are inlined into the app bundle.
+- Put local Edge Function secrets in `supabase/functions/.env`, which is git-ignored. Use Supabase's project secret store for deployed functions; never commit secret values or add them to CI.
+- Supabase reserves custom secret names beginning with `SUPABASE_`. Use platform-provided Supabase environment variables and non-reserved names for application/provider secrets.
+- CI uses placeholder public configuration and local synthetic database users; it does not connect to hosted Supabase or require production secrets.
 
 ## 4. Authentication and authorization
 
@@ -55,6 +62,7 @@ Never place Restricted data in source control, client bundles, analytics, crash 
 ## 6. Privacy and compliance checklist
 
 Before launch:
+
 - Publish a privacy policy that matches actual data collection and third-party processing.
 - Publish terms of service and a support contact.
 - Explain AI processing at the point of use.
@@ -71,7 +79,7 @@ This checklist is not legal advice and does not establish compliance by itself.
 
 ## 7. Operational controls
 
-- Separate dev, staging, and production.
+- The owner has chosen one linked production Supabase project and no separate cloud dev/staging projects. Use the local Supabase stack for isolated tests; never use production for destructive test runs.
 - Use managed secret storage.
 - Require review before production migration.
 - Back up production data and periodically test restore.

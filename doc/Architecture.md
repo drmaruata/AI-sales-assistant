@@ -14,18 +14,21 @@
 Entries marked `(planned)` are decided but not yet installed or used. Verify against `package.json` before relying on version-specific behaviour.
 
 ### Mobile — in use
+
 - Expo SDK 58, React Native 0.88, TypeScript 6 in strict mode
 - Expo Router
 - `@supabase/supabase-js`
 - Zod for schema validation, with controlled component state for form input
 
 ### Mobile — planned
+
 - TanStack Query or a comparable server-state cache, once server reads begin in Slice 3
 - Expo Notifications for device notifications, in Slice 4
 
 React Hook Form was considered for forms and is not used. Controlled component state plus Zod needed less code than the library, and the earlier sketch in this document and in `README.md` listed only as "or an equivalent validated form approach". Do not describe React Hook Form as part of the stack.
 
 ### Backend
+
 - Supabase Auth
 - Supabase Postgres with RLS
 - Supabase Edge Functions for privileged operations and AI calls
@@ -33,14 +36,16 @@ React Hook Form was considered for forms and is not used. Controlled component s
 - Scheduled jobs only when a proven requirement exists; do not depend on in-process timers for reminders
 
 ### AI
+
 - Provider adapter on server side, e.g. `generateReplyDraft(input): Promise<ReplyDraft>`
 - Provider selected through server environment configuration
 - Structured output validation and usage limits
 - Optional fallback provider only if privacy, quality, and cost are understood
 
-### Operations — planned, none in place yet
-- GitHub repository and CI. There is no remote and no workflow under `.github/`; a hidden `.git` exists locally with zero commits.
-- Environment separation: local/dev, staging, production.
+### Operations
+
+- GitHub Actions CI is configured for app checks, Android bundle export, and local Supabase database tests; its first hosted run is pending.
+- One linked Supabase project is designated production by owner decision. Separate cloud dev/staging projects are intentionally not used; the local Supabase stack is the isolated test environment.
 - Error monitoring with redaction.
 - Automated database backups and tested restore process.
 - Privacy policy and terms hosted on a stable public URL.
@@ -118,7 +123,7 @@ ai-sales-assistant/
 ├── package.json
 ├── tsconfig.json
 ├── eslint.config.js
-├── .env                          # git-ignored, holds real credentials
+├── .env                          # git-ignored, client-safe Expo configuration only
 ├── .env.example
 └── README.md
 ```
@@ -131,11 +136,12 @@ Route placement rules, which differ from the original sketch:
 - Shared code imports through the `@/` alias (`src/`) or `@/assets/` (`assets/`). Do not use deep relative paths across feature boundaries.
 
 Preserve these feature boundaries when the remaining slices add leads, follow-ups, AI drafts, and the business profile.
-The Slice 2 migration is source-controlled and applied to the linked development Supabase project. It covers workspaces and memberships only; RLS for leads and other product data is still pending. The pgTAP suite has not yet run against a local database.
+The Slice 2 migration is source-controlled and applied to the single linked production Supabase project by owner decision. It covers workspaces and memberships only; RLS for leads and other product data is still pending. The pgTAP suite has not yet run against a local database.
 
 ## 6. Data flow
 
 ### Lead CRUD
+
 1. Client validates input for immediate feedback.
 2. Client sends request with user session.
 3. Database RLS checks workspace membership.
@@ -144,6 +150,7 @@ The Slice 2 migration is source-controlled and applied to the linked development
 6. Errors are normalized to safe messages.
 
 ### AI draft
+
 1. Client submits lead ID, purpose, tone, language, and optional user-provided question.
 2. Edge Function validates schema, authenticates user, checks workspace membership and usage allowance.
 3. Function fetches approved business profile and permitted lead context from Postgres.
@@ -153,6 +160,7 @@ The Slice 2 migration is source-controlled and applied to the linked development
 7. Client displays editable draft; user manually copies/sends it.
 
 ### Follow-up
+
 For MVP, support in-app due/overdue lists and optional local notifications. Local notifications are device-specific and can be lost if the app is removed or permissions are denied. If cross-device reminders are required, implement a durable backend scheduler and push-token lifecycle in a later phase.
 
 ## 7. Security architecture
@@ -175,13 +183,9 @@ For MVP, support in-app due/overdue lists and optional local notifications. Loca
 Conceptual TypeScript interface:
 
 ```ts
-export type DraftPurpose =
-  | "first_response"
-  | "follow_up"
-  | "answer_question"
-  | "reengagement";
+export type DraftPurpose = 'first_response' | 'follow_up' | 'answer_question' | 'reengagement';
 
-export type DraftTone = "professional" | "friendly" | "concise";
+export type DraftTone = 'professional' | 'friendly' | 'concise';
 
 export interface GenerateReplyInput {
   purpose: DraftPurpose;

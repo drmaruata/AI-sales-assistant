@@ -7,6 +7,7 @@ Verify core workflows, tenant isolation, AI safety boundaries, notification beha
 ## 2. Test layers
 
 ### Unit tests
+
 - Zod/shared validation schemas
 - Stage transition and follow-up helpers
 - Date/time and timezone utilities
@@ -15,6 +16,7 @@ Verify core workflows, tenant isolation, AI safety boundaries, notification beha
 - Error normalization
 
 ### Integration tests
+
 - Authenticated database access
 - RLS across two users and two workspaces
 - Workspace creation transaction
@@ -23,12 +25,15 @@ Verify core workflows, tenant isolation, AI safety boundaries, notification beha
 - AI Edge Function authorization, quotas, timeout and provider failures
 - Export and deletion authorization
 
-Database migrations and RLS tests use pgTAP via `npx supabase test db` against the
-local Supabase stack. Start Docker and run `npx supabase start`, then
-`npx supabase db reset` to apply migrations before testing. The Slice 2 suite is
-`supabase/tests/workspace_tenant_foundation.test.sql`.
+Database migrations and RLS tests use pgTAP against the local Supabase stack. Start
+Docker, then run `npm run db:start`, `npm run db:reset`, and `npm run db:test`.
+These scripts explicitly target the local database; do not use the linked-project
+flags for routine tests. The Slice 2 suite is
+`supabase/tests/workspace_tenant_foundation.test.sql`. GitHub Actions runs the same
+local migration/test flow on pull requests and pushes to `main`.
 
 ### UI/component tests
+
 - Sign-in and validation errors
 - Lead form required/optional fields
 - Search/filter behavior
@@ -37,6 +42,7 @@ local Supabase stack. Start Docker and run `npx supabase start`, then
 - Accessibility labels and text scaling
 
 ### End-to-end tests
+
 - New user → workspace → first lead
 - Lead → schedule follow-up → due queue
 - Lead → generate draft → edit → copy
@@ -45,6 +51,7 @@ local Supabase stack. Start Docker and run `npx supabase start`, then
 - User A attempts to access User B's lead and fails
 
 ### Manual device tests
+
 - Current supported Android device and one smaller screen
 - Keyboard does not obscure form actions
 - App resumes after backgrounding
@@ -58,6 +65,7 @@ local Supabase stack. Start Docker and run `npx supabase start`, then
 Create User A/Workspace A and User B/Workspace B.
 
 Attempt as User A to:
+
 - select Workspace B leads;
 - query a Workspace B lead by UUID;
 - update a Workspace B lead;
@@ -93,12 +101,13 @@ Use synthetic fixtures, not real customer messages.
 - Expired token during mutation.
 - AI provider rate limit and outage.
 - Duplicate submission protection.
-- Database restore rehearsal in staging.
+- Database restore rehearsal against an isolated local target; never overwrite production data during restore tests.
 - Verify app does not leak cached data after sign-out/account switch.
 
 ## 6. Release gates
 
 Release only when:
+
 - all P0 requirements have test evidence;
 - no unresolved critical/high security issues;
 - tenant-isolation tests pass;
@@ -111,6 +120,7 @@ Release only when:
 ## 7. Test report template
 
 For each release, record:
+
 - commit SHA and build number;
 - environment and device/OS;
 - tests run and pass/fail counts;

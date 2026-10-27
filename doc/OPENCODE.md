@@ -25,12 +25,14 @@ Implement the AI Sales Assistant according to `PRD.md`, `SRS.md`, `Design.md`, `
 ## Implementation order
 
 ### Slice 1 — project foundation
+
 - Expo app, strict TypeScript, lint/format/test scripts.
 - Environment parsing and Supabase client.
 - Auth screens and session state.
 - Basic navigation and design tokens.
 
 ### Slice 2 — secure tenant foundation
+
 - SQL migrations for workspaces and memberships.
 - Transaction-safe workspace creation.
 - RLS policies and tests using two separate users.
@@ -43,23 +45,34 @@ workspace and owner membership in one database transaction. Authenticated client
 read only their own membership and cannot write workspace or membership rows directly.
 `supabase/tests/workspace_tenant_foundation.test.sql` covers two-user isolation,
 privilege boundaries, validation, and rollback on owner-membership failure. Run
-`npx supabase start`, `npx supabase db reset`, then `npx supabase test db` with Docker
-running. The workspace migration is applied to the linked development Supabase project
-as migration `20261026152409`; the pgTAP suite has not yet run against a local database.
-Leads and other tenant-owned tables remain for later slices.
+`npm run db:start`, `npm run db:reset`, then `npm run db:test` with Docker running.
+These scripts explicitly target the local database. By owner decision, the workspace
+migration is applied to the single linked production Supabase project as migration
+`20261026152409`; the pgTAP
+suite has not yet run against a local database. Leads and other tenant-owned tables
+remain for later slices.
+
+The root `.env` is for client-safe Expo configuration only; Expo loads every variable
+there into the dev-server process. Local Edge Function secrets belong in the ignored
+`supabase/functions/.env`, and hosted secrets belong in Supabase's secret store. The
+owner chose not to separate cloud development/staging from production; use the local
+Supabase stack for isolated tests and never run destructive tests against production.
 
 ### Slice 3 — leads
+
 - Lead CRUD, stage changes, search/filter, pagination.
 - Activities/notes and archive.
 - Form validation and offline/error states.
 
 ### Slice 4 — follow-ups and dashboard
+
 - Follow-up CRUD and queue.
 - Dashboard summary.
 - Notification permission and scheduling behavior.
 - Timezone tests.
 
 ### Slice 5 — AI drafts
+
 - Server-side provider adapter.
 - `generate-reply-draft` Edge Function.
 - Usage metering, rate limits, schema validation.
@@ -67,6 +80,7 @@ Leads and other tenant-owned tables remain for later slices.
 - Editable draft UI and copy action.
 
 ### Slice 6 — launch readiness
+
 - Export and account deletion workflows.
 - Privacy/terms/support links.
 - Monitoring, backups, restore rehearsal.

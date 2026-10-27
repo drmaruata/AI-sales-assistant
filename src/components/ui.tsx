@@ -90,13 +90,7 @@ export function useTheme() {
   };
 }
 
-export function Screen({
-  children,
-  testID,
-}: {
-  children: ReactNode;
-  testID?: string;
-}) {
+export function Screen({ children, testID }: { children: ReactNode; testID?: string }) {
   const { colors: theme } = useTheme();
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]} testID={testID}>
@@ -175,8 +169,7 @@ export function Button({
 }) {
   const { colors: theme } = useTheme();
   const inactive = disabled || loading;
-  const background =
-    variant === 'primary' ? theme.accent : 'transparent';
+  const background = variant === 'primary' ? theme.accent : 'transparent';
   const foreground = variant === 'primary' ? theme.accentText : theme.accent;
 
   return (

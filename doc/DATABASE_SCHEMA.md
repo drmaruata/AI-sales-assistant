@@ -14,6 +14,7 @@
 ## 2. Proposed tables
 
 ### `workspaces`
+
 - `id uuid primary key default gen_random_uuid()`
 - `name text not null check (char_length(name) between 1 and 160)`
 - `slug text unique`
@@ -23,6 +24,7 @@
 - `updated_at timestamptz not null default now()`
 
 ### `workspace_members`
+
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `user_id uuid not null references auth.users(id) on delete cascade`
 - `role text not null check (role in ('owner','member'))`
@@ -32,6 +34,7 @@
 Only a trusted workspace-creation flow may assign the first owner. Never allow a user to promote themselves to owner by directly updating this table.
 
 ### `leads`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `display_name text not null`
@@ -49,6 +52,7 @@ Only a trusted workspace-creation flow may assign the first owner. Never allow a
 - constraints for field lengths and basic email format where appropriate
 
 ### `lead_activities`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `lead_id uuid not null references leads(id) on delete cascade`
@@ -61,6 +65,7 @@ Only a trusted workspace-creation flow may assign the first owner. Never allow a
 Treat activity records as append-only from the normal client. Avoid storing secrets or unnecessary contact details in metadata.
 
 ### `business_profiles`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null unique references workspaces(id) on delete cascade`
 - `business_name text not null`
@@ -76,6 +81,7 @@ Treat activity records as append-only from the normal client. Avoid storing secr
 Validate JSON shapes server-side. Do not allow arbitrary prompt/system instructions in this table.
 
 ### `ai_drafts`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `lead_id uuid not null references leads(id) on delete cascade`
@@ -94,6 +100,7 @@ Validate JSON shapes server-side. Do not allow arbitrary prompt/system instructi
 Decide and disclose retention. Do not store complete raw prompts by default.
 
 ### `follow_ups` (recommended over only storing one lead timestamp if history is needed)
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `lead_id uuid not null references leads(id) on delete cascade`
@@ -107,6 +114,7 @@ Decide and disclose retention. Do not store complete raw prompts by default.
 - `updated_at timestamptz not null default now()`
 
 ### `ai_usage_events`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid not null references workspaces(id) on delete cascade`
 - `user_id uuid not null references auth.users(id)`
@@ -122,6 +130,7 @@ Decide and disclose retention. Do not store complete raw prompts by default.
 This is for metering, not billing truth. Prevent clients from writing usage events directly.
 
 ### `audit_events`
+
 - `id uuid primary key default gen_random_uuid()`
 - `workspace_id uuid references workspaces(id) on delete set null`
 - `actor_user_id uuid references auth.users(id) on delete set null`
@@ -137,6 +146,7 @@ Do not log secrets, raw drafts, full contact information, or unrestricted reques
 ## 3. Indexes
 
 Recommended initial indexes:
+
 - `workspace_members(user_id, workspace_id)`
 - `leads(workspace_id, stage, updated_at desc) where archived_at is null`
 - `leads(workspace_id, next_follow_up_at) where archived_at is null`
@@ -172,6 +182,7 @@ $$;
 ```
 
 Security notes:
+
 - Review function owner, grants, and execution privileges.
 - Grant execute only as required.
 - Keep `app_private` out of PostgREST's exposed schemas; authenticated execution is needed for policy evaluation, not client RPC access.
@@ -220,8 +231,8 @@ is executable only by `authenticated` so RLS can evaluate it. The membership rel
 remains the authorization source of truth. pgTAP tests for two-user isolation and
 transaction rollback live in `supabase/tests/workspace_tenant_foundation.test.sql`.
 
-This migration is applied to the linked development Supabase project as migration
-`20261026152409`. The pgTAP suite has not yet run against a local database. Leads and
+By owner decision, this migration is applied to the single linked production Supabase
+project as migration `20261026152409`. The pgTAP suite has not yet run against a local database. Leads and
 other tenant-owned tables are not yet present and must receive their own RLS policies
 in later slices.
 

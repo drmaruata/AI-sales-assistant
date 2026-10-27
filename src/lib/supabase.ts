@@ -19,7 +19,7 @@ export function getSupabaseClient(): SupabaseClient {
   // The message names variables only, never their values.
   if (!clientEnv) {
     throw new Error(
-      'Supabase client configuration is missing. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env (see .env.example).'
+      'Supabase client configuration is missing. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env (see .env.example).',
     );
   }
   if (!cachedClient) {
@@ -33,7 +33,7 @@ export function getSupabaseClient(): SupabaseClient {
           persistSession: true,
           detectSessionInUrl: false,
         },
-      }
+      },
     );
   }
   return cachedClient;

@@ -3,25 +3,28 @@
 Priority definitions: P0 = required for pilot; P1 = next; P2 = later.
 
 ## Epic A — Foundation and auth (P0)
+
 - A1: Initialize Expo + TypeScript app. **Done.**
-- A2: Configure lint, formatting, type-check, tests, CI. **Partly done.** Lint, typecheck, and unit tests run. No formatter configured and no CI workflow exists under `.github/`.
+- A2: Configure lint, formatting, type-check, tests, CI. **Implemented; CI run pending.** ESLint, Prettier, TypeScript, unit tests, Android export, and local Supabase pgTAP checks are configured. The workflow has not yet run on GitHub.
 - A3: Sign up, sign in, sign out, password recovery. **Partly done.** Sign-in, sign-up, and sign-out are implemented. There is no password-recovery screen.
 - A4: Persist session securely using supported Supabase/Expo guidance. **Partly done.** The session persists in AsyncStorage. The encrypted storage variant has not been implemented.
-- A5: Create workspace and owner membership transactionally. **Not done.**
+- A5: Create workspace and owner membership transactionally. **Backend implemented; app integration pending.** The authenticated RPC creates both records atomically and is applied to development; onboarding does not call it yet.
 - A6: Show session-expired and network-error states. **Partly done.** Screens show loading and inline error states; a session-expired path is not implemented yet.
 
 Acceptance: user can create an account and workspace; unauthorized workspace access is denied.
 
 ## Epic B — Tenant security (P0)
-- B1: Create workspace/member schema and policies.
-- B2: Add membership authorization helper with safe privileges.
-- B3: Add RLS policies for all tenant-owned tables.
-- B4: Test two-user/two-workspace isolation.
-- B5: Add migration review workflow.
+
+- B1: Create workspace/member schema and policies. **Implemented for workspace foundation; applied to development.**
+- B2: Add membership authorization helper with safe privileges. **Implemented.**
+- B3: Add RLS policies for all tenant-owned tables. **Partly done.** Workspaces and memberships are covered; product tables are not yet implemented.
+- B4: Test two-user/two-workspace isolation. **Test suite written; runtime pass pending** because Docker is unavailable locally.
+- B5: Add migration review workflow. **Partly done.** Migrations are source-controlled and CI will apply/test them locally; review and hosted rollout remain manual.
 
 Acceptance: direct API attempts to access another workspace fail.
 
 ## Epic C — Lead management (P0)
+
 - C1: Create lead form.
 - C2: Lead list with pagination.
 - C3: Lead detail.
@@ -33,6 +36,7 @@ Acceptance: direct API attempts to access another workspace fail.
 Acceptance: user can manage a lead end-to-end without losing data on recoverable errors.
 
 ## Epic D — Follow-up discipline (P0)
+
 - D1: Create/reschedule/complete/cancel follow-up.
 - D2: Overdue/today/upcoming queues.
 - D3: Dashboard counts.
@@ -43,6 +47,7 @@ Acceptance: user can manage a lead end-to-end without losing data on recoverable
 Acceptance: due follow-ups are visible in-app even if notifications are denied.
 
 ## Epic E — Business context (P0)
+
 - E1: Business profile.
 - E2: Products/services and approved FAQs.
 - E3: Tone preference.
@@ -52,6 +57,7 @@ Acceptance: due follow-ups are visible in-app even if notifications are denied.
 Acceptance: user can inspect and edit facts used to draft replies.
 
 ## Epic F — AI drafting (P0)
+
 - F1: Provider adapter.
 - F2: Server-side generation endpoint.
 - F3: Authorization and quotas.
@@ -64,6 +70,7 @@ Acceptance: user can inspect and edit facts used to draft replies.
 Acceptance: AI draft is human-reviewed and never automatically sent.
 
 ## Epic G — Data rights and operations (P0)
+
 - G1: Workspace export.
 - G2: Account/workspace deletion workflow.
 - G3: Redacted logs and error monitoring.
@@ -74,6 +81,7 @@ Acceptance: AI draft is human-reviewed and never automatically sent.
 Acceptance: data export/deletion is documented and tested; no critical/high security issues remain.
 
 ## Epic H — Paid launch (P1)
+
 - H1: Define plans, quotas, limits.
 - H2: Select billing flow after app-store policy review.
 - H3: Onboarding analytics.
@@ -82,6 +90,7 @@ Acceptance: data export/deletion is documented and tested; no critical/high secu
 - H6: Revenue, churn, cost, and conversion dashboard.
 
 ## Epic I — Integrations (P1/P2)
+
 - I1: CSV import/export.
 - I2: Team members and lead assignment.
 - I3: Official WhatsApp Business Platform integration.

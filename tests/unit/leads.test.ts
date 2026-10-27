@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { filterLeads, initialPreviewLeads, sortLeads } from '../../src/features/leads/preview-data.ts';
+import {
+  filterLeads,
+  initialPreviewLeads,
+  sortLeads,
+} from '../../src/features/leads/preview-data.ts';
 
 describe('filterLeads', () => {
   it('returns all leads for a blank query and All stage', () => {
@@ -11,18 +15,18 @@ describe('filterLeads', () => {
   it('searches names, businesses, and notes without case sensitivity', () => {
     assert.deepEqual(
       filterLeads(initialPreviewLeads, 'GREENFIELD', 'All').map((lead) => lead.id),
-      ['lead-1']
+      ['lead-1'],
     );
     assert.deepEqual(
       filterLeads(initialPreviewLeads, 'starter plan', 'All').map((lead) => lead.id),
-      ['lead-2']
+      ['lead-2'],
     );
   });
 
   it('combines the query and stage filters', () => {
     assert.deepEqual(
       filterLeads(initialPreviewLeads, 'academy', 'Follow-up').map((lead) => lead.id),
-      ['lead-1']
+      ['lead-1'],
     );
     assert.deepEqual(filterLeads(initialPreviewLeads, 'academy', 'New'), []);
   });
@@ -41,11 +45,11 @@ describe('filterLeads', () => {
     ];
     assert.deepEqual(
       sortLeads(leads, 'Next follow-up').map((lead) => lead.id),
-      ['lead-2', 'lead-1', 'lead-3']
+      ['lead-2', 'lead-1', 'lead-3'],
     );
     assert.deepEqual(
       sortLeads(leads, 'Recently updated').map((lead) => lead.id),
-      ['lead-1', 'lead-2', 'lead-3']
+      ['lead-1', 'lead-2', 'lead-3'],
     );
   });
 });

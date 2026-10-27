@@ -20,6 +20,7 @@ MVP may implement only owner access, but schema and policies must not rely on a 
 ## 4. Functional requirements
 
 ### Authentication and workspace
+
 - FR-AUTH-001: The system shall support secure sign-up, sign-in, sign-out, and password recovery using the configured Supabase Auth methods.
 - FR-AUTH-002: The system shall create or join a workspace through a trusted operation.
 - FR-AUTH-003: The system shall reject requests for workspace resources when the authenticated user lacks membership.
@@ -27,6 +28,7 @@ MVP may implement only owner access, but schema and policies must not rely on a 
 - FR-AUTH-005: The system shall allow the user to request account deletion and explain any lawful retention exceptions.
 
 ### Leads
+
 - FR-LEAD-001: The user shall create a lead with at least a display name or business name.
 - FR-LEAD-002: The user shall edit, view, archive, and restore leads where permitted.
 - FR-LEAD-003: The system shall support pipeline stages New, Contacted, Qualified, Won, and Lost.
@@ -36,12 +38,14 @@ MVP may implement only owner access, but schema and policies must not rely on a 
 - FR-LEAD-007: Lead lists shall be paginated and must not load the entire tenant dataset at once.
 
 ### Notes and activity
+
 - FR-ACT-001: A user shall add a dated note or interaction to a lead.
 - FR-ACT-002: The system shall display the lead timeline in chronological order.
 - FR-ACT-003: The system shall record key state changes such as stage changes and follow-up changes.
 - FR-ACT-004: The system shall not permit a user to alter another tenant's activity history.
 
 ### Follow-ups and notifications
+
 - FR-FUP-001: A user shall set, edit, complete, or cancel a follow-up.
 - FR-FUP-002: The dashboard shall show overdue and due-today follow-ups.
 - FR-FUP-003: The app shall request notification permission contextually and respect denial.
@@ -50,11 +54,13 @@ MVP may implement only owner access, but schema and policies must not rely on a 
 - FR-FUP-006: Rescheduling or completing a follow-up shall cancel or update related scheduled notifications where supported.
 
 ### Business profile
+
 - FR-BIZ-001: The owner shall manage business name, description, services/products, contact details, preferred tone, and approved FAQs.
 - FR-BIZ-002: The app shall explain that business profile content may be used to generate AI drafts.
 - FR-BIZ-003: The user shall be able to correct or remove outdated business facts.
 
 ### AI drafting
+
 - FR-AI-001: The user shall choose a lead and draft purpose before requesting an AI reply.
 - FR-AI-002: AI generation shall occur on a trusted server-side component.
 - FR-AI-003: The server shall authorize the user against the lead and workspace before generation.
@@ -68,12 +74,14 @@ MVP may implement only owner access, but schema and policies must not rely on a 
 - FR-AI-011: User-provided lead notes shall be treated as untrusted data, not as instructions that can override system policy.
 
 ### Dashboard and reporting
+
 - FR-DASH-001: The dashboard shall show counts for open leads, overdue follow-ups, due today, and leads by stage.
 - FR-DASH-002: Dashboard counts shall be derived from authorized workspace data.
 - FR-DASH-003: Empty states shall provide an action to add a lead or configure the business profile.
 - FR-DASH-004: The app shall clearly distinguish no data from a loading or error state.
 
 ### Data portability and settings
+
 - FR-DATA-001: The user shall be able to export workspace leads and associated user-owned data in a documented format, subject to role authorization.
 - FR-DATA-002: The system shall provide a documented deletion process for user and workspace data.
 - FR-DATA-003: Settings shall expose notification preferences and AI usage where implemented.

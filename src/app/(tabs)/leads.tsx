@@ -1,14 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { router } from 'expo-router';
-import {
-  FlatList,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import {
   EmptyState,
@@ -19,7 +11,14 @@ import {
 } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
 import { usePreviewLeads } from '@/features/leads/PreviewLeadsProvider';
-import { filterLeads, leadStages, sortLeads, type Lead, type LeadSort, type LeadStage } from '@/features/leads/preview-data';
+import {
+  filterLeads,
+  leadStages,
+  sortLeads,
+  type Lead,
+  type LeadSort,
+  type LeadStage,
+} from '@/features/leads/preview-data';
 import { MIN_TOUCH_TARGET, radius, spacing, typography } from '@/theme';
 
 type StageFilter = LeadStage | 'All';
@@ -42,7 +41,7 @@ export default function LeadsScreen() {
 
   const renderLead = useCallback(
     ({ item }: { item: Lead }) => <LeadRow lead={item} onPress={() => openLead(item)} />,
-    [openLead]
+    [openLead],
   );
 
   const filters: StageFilter[] = ['All', ...leadStages];
@@ -55,8 +54,13 @@ export default function LeadsScreen() {
           subtitle={`${filteredLeads.length} ${showArchived ? 'archived' : 'sample'} enquiries`}
         />
         <PreviewNotice />
-        <View style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-          <Text accessibilityElementsHidden style={[styles.searchGlyph, { color: theme.textSecondary }]}>
+        <View
+          style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}
+        >
+          <Text
+            accessibilityElementsHidden
+            style={[styles.searchGlyph, { color: theme.textSecondary }]}
+          >
             ⌕
           </Text>
           <TextInput
@@ -109,7 +113,9 @@ export default function LeadsScreen() {
                   ]}
                 >
                   {filter}
-                  {filter === 'All' ? ` · ${showArchived ? leads.filter((lead) => lead.archived).length : leads.filter((lead) => !lead.archived).length}` : ''}
+                  {filter === 'All'
+                    ? ` · ${showArchived ? leads.filter((lead) => lead.archived).length : leads.filter((lead) => !lead.archived).length}`
+                    : ''}
                 </Text>
               </Pressable>
             );
@@ -130,7 +136,12 @@ export default function LeadsScreen() {
                 },
               ]}
             >
-              <Text style={[styles.archiveText, { color: showArchived === archived ? theme.accent : theme.textSecondary }]}>
+              <Text
+                style={[
+                  styles.archiveText,
+                  { color: showArchived === archived ? theme.accent : theme.textSecondary },
+                ]}
+              >
                 {archived ? 'Archived' : 'Active'}
               </Text>
             </Pressable>
@@ -154,7 +165,14 @@ export default function LeadsScreen() {
                   },
                 ]}
               >
-                <Text style={[styles.sortText, { color: selected ? theme.accent : theme.textSecondary }]}>{value}</Text>
+                <Text
+                  style={[
+                    styles.sortText,
+                    { color: selected ? theme.accent : theme.textSecondary },
+                  ]}
+                >
+                  {value}
+                </Text>
               </Pressable>
             );
           })}
@@ -218,15 +236,39 @@ const styles = StyleSheet.create({
   filterScroll: { flexGrow: 0, height: 52, marginBottom: spacing.md },
   filters: { alignItems: 'center', gap: spacing.sm },
   archiveSwitch: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
-  archiveOption: { minHeight: 40, justifyContent: 'center', borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.md },
+  archiveOption: {
+    minHeight: 40,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+  },
   archiveText: { fontSize: 12, fontWeight: '600' },
   archivedRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   archivedLead: { flex: 1 },
-  restore: { minHeight: 44, justifyContent: 'center', borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.sm },
+  restore: {
+    minHeight: 44,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+  },
   restoreText: { fontSize: 12, fontWeight: '600' },
-  sortRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing.xs, marginBottom: spacing.sm },
+  sortRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+    marginBottom: spacing.sm,
+  },
   sortLabel: { ...typography.caption, marginRight: spacing.xs },
-  sortOption: { minHeight: 36, justifyContent: 'center', borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.sm },
+  sortOption: {
+    minHeight: 36,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+  },
   sortText: { fontSize: 11, fontWeight: '600' },
   filterChip: {
     minHeight: MIN_TOUCH_TARGET,

@@ -26,7 +26,9 @@ export default function HomeScreen() {
   const pendingFollowUps = followUps.filter((item) => item.status === 'Pending');
   const attentionLeads = activeLeads.filter((lead) => lead.followUp);
   const recentActivity = activeLeads
-    .flatMap((lead) => (lead.notes ?? []).map((note) => ({ ...note, leadName: lead.name, leadId: lead.id })))
+    .flatMap((lead) =>
+      (lead.notes ?? []).map((note) => ({ ...note, leadName: lead.name, leadId: lead.id })),
+    )
     .slice(0, 3);
 
   const openLead = useCallback((lead: Lead) => {
@@ -34,10 +36,8 @@ export default function HomeScreen() {
   }, []);
 
   const renderLead = useCallback(
-    ({ item }: { item: Lead }) => (
-      <LeadRow lead={item} compact onPress={() => openLead(item)} />
-    ),
-    [openLead]
+    ({ item }: { item: Lead }) => <LeadRow lead={item} compact onPress={() => openLead(item)} />,
+    [openLead],
   );
 
   const Header = (
@@ -53,13 +53,18 @@ export default function HomeScreen() {
         <MetricCard label="Open leads" value={activeLeads.length} detail="In your pipeline" />
         <MetricCard
           label="Overdue"
-          value={pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('overdue')).length}
+          value={
+            pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('overdue'))
+              .length
+          }
           detail="No overdue sample items"
           tone="warning"
         />
         <MetricCard
           label="Due today"
-          value={pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('today')).length}
+          value={
+            pendingFollowUps.filter((item) => item.due.toLocaleLowerCase().includes('today')).length
+          }
           detail="Keep the momentum"
           tone="success"
         />
@@ -101,15 +106,24 @@ export default function HomeScreen() {
                   onPress={() => router.push(`/lead/${activity.leadId}`)}
                   style={[styles.activity, { borderBottomColor: theme.border }]}
                 >
-                  <Text style={[styles.activityTitle, { color: theme.text }]}>{activity.leadName}</Text>
-                  <Text style={[styles.activityText, { color: theme.textSecondary }]} numberOfLines={2}>
+                  <Text style={[styles.activityTitle, { color: theme.text }]}>
+                    {activity.leadName}
+                  </Text>
+                  <Text
+                    style={[styles.activityText, { color: theme.textSecondary }]}
+                    numberOfLines={2}
+                  >
                     {activity.text}
                   </Text>
-                  <Text style={[styles.activityTime, { color: theme.textSecondary }]}>{activity.createdAt}</Text>
+                  <Text style={[styles.activityTime, { color: theme.textSecondary }]}>
+                    {activity.createdAt}
+                  </Text>
                 </Pressable>
               ))
             ) : (
-              <Text style={[styles.empty, { color: theme.textSecondary }]}>Notes and stage updates will show here.</Text>
+              <Text style={[styles.empty, { color: theme.textSecondary }]}>
+                Notes and stage updates will show here.
+              </Text>
             )}
             <Pressable
               accessibilityRole="button"
@@ -119,7 +133,7 @@ export default function HomeScreen() {
                 { backgroundColor: theme.accent, opacity: pressed ? 0.82 : 1 },
               ]}
             >
-              <Text style={[typography.label, { color: theme.accentText }]}>＋  Add a lead</Text>
+              <Text style={[typography.label, { color: theme.accentText }]}>＋ Add a lead</Text>
             </Pressable>
           </View>
         }
@@ -139,7 +153,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   empty: { ...typography.body, paddingVertical: spacing.lg, lineHeight: 22 },
-  activity: { minHeight: 68, justifyContent: 'center', borderBottomWidth: StyleSheet.hairlineWidth, paddingVertical: spacing.sm },
+  activity: {
+    minHeight: 68,
+    justifyContent: 'center',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingVertical: spacing.sm,
+  },
   activityTitle: { ...typography.label },
   activityText: { ...typography.caption, lineHeight: 18, marginTop: 2 },
   activityTime: { fontSize: 11, marginTop: 2 },

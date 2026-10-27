@@ -32,14 +32,24 @@ export default function AddNoteScreen() {
       <TextInput
         accessibilityLabel="Note"
         value={note}
-        onChangeText={(value) => { setNote(value); setError(null); }}
+        onChangeText={(value) => {
+          setNote(value);
+          setError(null);
+        }}
         placeholder="Capture a useful detail from the conversation"
         placeholderTextColor={theme.textSecondary}
         multiline
         textAlignVertical="top"
-        style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+        style={[
+          styles.input,
+          { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+        ]}
       />
-      {error ? <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>{error}</Text> : null}
+      {error ? (
+        <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>
+          {error}
+        </Text>
+      ) : null}
       <ActionButton label="Save note to preview" onPress={save} disabled={!lead} />
     </SalesScreen>
   );
@@ -47,6 +57,13 @@ export default function AddNoteScreen() {
 
 const styles = StyleSheet.create({
   label: { ...typography.label, marginBottom: spacing.sm },
-  input: { minHeight: 160, borderWidth: 1, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md, fontSize: 15 },
+  input: {
+    minHeight: 160,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    fontSize: 15,
+  },
   error: { ...typography.caption, marginBottom: spacing.md },
 });

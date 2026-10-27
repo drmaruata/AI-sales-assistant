@@ -6,9 +6,7 @@ export const emailSchema = z
   .min(1, 'Email is required.')
   .email('Enter a valid email address.');
 
-export const passwordSchema = z
-  .string()
-  .min(8, 'Use at least 8 characters.');
+export const passwordSchema = z.string().min(8, 'Use at least 8 characters.');
 
 export const signInSchema = z.object({
   email: emailSchema,
@@ -42,10 +40,7 @@ export function signUpIssues(values: SignUpValues) {
       }
     }
   }
-  if (
-    !issues.confirmPassword &&
-    !confirmPasswordsMatch(values)
-  ) {
+  if (!issues.confirmPassword && !confirmPasswordsMatch(values)) {
     issues.confirmPassword = 'Passwords do not match.';
   }
   return issues;

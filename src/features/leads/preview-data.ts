@@ -48,7 +48,9 @@ export const initialPreviewLeads: Lead[] = [
     email: 'mina@example.test',
     phone: '+1 555 010 1200',
     source: 'Website enquiry',
-    notes: [{ id: 'note-1', text: 'Asked for an admissions team demo.', createdAt: 'Today · 9:15 AM' }],
+    notes: [
+      { id: 'note-1', text: 'Asked for an admissions team demo.', createdAt: 'Today · 9:15 AM' },
+    ],
   },
   {
     id: 'lead-2',
@@ -95,7 +97,8 @@ export const initialBusinessProfile: BusinessProfile = {
   name: 'Sample workspace',
   description: 'A small business helping customers find the right service.',
   services: 'Introductory consultation, Starter plan',
-  approvedFacts: 'We respond within one business day. A consultation helps us understand each customer’s needs.',
+  approvedFacts:
+    'We respond within one business day. A consultation helps us understand each customer’s needs.',
   tone: 'Friendly',
 };
 
@@ -132,7 +135,7 @@ export function filterLeads(
   leads: Lead[],
   query: string,
   stage: LeadStage | 'All',
-  includeArchived = false
+  includeArchived = false,
 ) {
   const normalizedQuery = query.trim().toLocaleLowerCase();
 

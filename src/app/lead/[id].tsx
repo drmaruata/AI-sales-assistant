@@ -44,14 +44,17 @@ export default function LeadDetailsScreen() {
             }
           },
         },
-      ]
+      ],
     );
   }
 
   if (!lead) {
     return (
       <SalesScreen>
-        <PageHeading title="Lead not found" subtitle="This preview lead may no longer be available." />
+        <PageHeading
+          title="Lead not found"
+          subtitle="This preview lead may no longer be available."
+        />
         <ActionButton label="Back to leads" onPress={() => router.replace('/(tabs)/leads')} />
       </SalesScreen>
     );
@@ -66,7 +69,7 @@ export default function LeadDetailsScreen() {
           onPress={goBackToLeads}
           style={styles.backButton}
         >
-          <Text style={[styles.backText, { color: theme.accent }]}>‹  Leads</Text>
+          <Text style={[styles.backText, { color: theme.accent }]}>‹ Leads</Text>
         </Pressable>
         <View style={styles.profile}>
           <LeadAvatar name={lead.name} size={64} />
@@ -79,7 +82,9 @@ export default function LeadDetailsScreen() {
         <PreviewNotice />
         {lead.archived ? (
           <View style={styles.actions}>
-            <Text style={[styles.body, { color: theme.textSecondary }]}>This lead is archived.</Text>
+            <Text style={[styles.body, { color: theme.textSecondary }]}>
+              This lead is archived.
+            </Text>
             <ActionButton
               label="Restore lead"
               onPress={() => {
@@ -90,19 +95,44 @@ export default function LeadDetailsScreen() {
           </View>
         ) : (
           <View style={styles.actions}>
-            <ActionButton label="Add a note" secondary onPress={() => router.push(`/note?leadId=${lead.id}`)} />
-            <ActionButton label="Set follow-up" secondary onPress={() => router.push(`/schedule-follow-up?leadId=${lead.id}`)} />
-            <ActionButton label="Draft a reply" onPress={() => router.push(`/draft-reply?leadId=${lead.id}`)} />
-            <ActionButton label="Edit lead" secondary onPress={() => router.push(`/edit-lead?leadId=${lead.id}`)} />
+            <ActionButton
+              label="Add a note"
+              secondary
+              onPress={() => router.push(`/note?leadId=${lead.id}`)}
+            />
+            <ActionButton
+              label="Set follow-up"
+              secondary
+              onPress={() => router.push(`/schedule-follow-up?leadId=${lead.id}`)}
+            />
+            <ActionButton
+              label="Draft a reply"
+              onPress={() => router.push(`/draft-reply?leadId=${lead.id}`)}
+            />
+            <ActionButton
+              label="Edit lead"
+              secondary
+              onPress={() => router.push(`/edit-lead?leadId=${lead.id}`)}
+            />
           </View>
         )}
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>Contact information</Text>
-          {lead.phone ? <Text style={[styles.body, { color: theme.textSecondary }]}>Phone · {lead.phone}</Text> : null}
-          {lead.email ? <Text style={[styles.body, { color: theme.textSecondary }]}>Email · {lead.email}</Text> : null}
-          {lead.source ? <Text style={[styles.body, { color: theme.textSecondary }]}>Source · {lead.source}</Text> : null}
+          {lead.phone ? (
+            <Text style={[styles.body, { color: theme.textSecondary }]}>Phone · {lead.phone}</Text>
+          ) : null}
+          {lead.email ? (
+            <Text style={[styles.body, { color: theme.textSecondary }]}>Email · {lead.email}</Text>
+          ) : null}
+          {lead.source ? (
+            <Text style={[styles.body, { color: theme.textSecondary }]}>
+              Source · {lead.source}
+            </Text>
+          ) : null}
           {!lead.phone && !lead.email && !lead.source ? (
-            <Text style={[styles.body, { color: theme.textSecondary }]}>No contact details added.</Text>
+            <Text style={[styles.body, { color: theme.textSecondary }]}>
+              No contact details added.
+            </Text>
           ) : null}
         </View>
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -115,11 +145,15 @@ export default function LeadDetailsScreen() {
             lead.notes.map((note) => (
               <View key={note.id} style={[styles.note, { borderTopColor: theme.border }]}>
                 <Text style={[styles.body, { color: theme.text }]}>{note.text}</Text>
-                <Text style={[styles.updated, { color: theme.textSecondary }]}>{note.createdAt}</Text>
+                <Text style={[styles.updated, { color: theme.textSecondary }]}>
+                  {note.createdAt}
+                </Text>
               </View>
             ))
           ) : (
-            <Text style={[styles.body, { color: theme.textSecondary }]}>No notes yet. Add a note after your next conversation.</Text>
+            <Text style={[styles.body, { color: theme.textSecondary }]}>
+              No notes yet. Add a note after your next conversation.
+            </Text>
           )}
         </View>
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
@@ -130,7 +164,9 @@ export default function LeadDetailsScreen() {
         </View>
         {!lead.archived ? (
           <>
-            <Text style={[styles.sectionTitle, styles.stageTitle, { color: theme.text }]}>Update stage</Text>
+            <Text style={[styles.sectionTitle, styles.stageTitle, { color: theme.text }]}>
+              Update stage
+            </Text>
             <View style={styles.stageOptions}>
               {leadStages.map((stage) => {
                 const selected = lead.stage === stage;
@@ -148,7 +184,12 @@ export default function LeadDetailsScreen() {
                       },
                     ]}
                   >
-                    <Text style={[styles.stageOptionText, { color: selected ? theme.accent : theme.text }]}>
+                    <Text
+                      style={[
+                        styles.stageOptionText,
+                        { color: selected ? theme.accent : theme.text },
+                      ]}
+                    >
                       {stage}
                     </Text>
                   </Pressable>
@@ -157,7 +198,9 @@ export default function LeadDetailsScreen() {
             </View>
           </>
         ) : null}
-        <Text style={[styles.updated, { color: theme.textSecondary }]}>Last updated {lead.updated}</Text>
+        <Text style={[styles.updated, { color: theme.textSecondary }]}>
+          Last updated {lead.updated}
+        </Text>
         {!lead.archived ? (
           <View style={styles.archive}>
             <ActionButton label="Archive lead" onPress={confirmArchive} secondary />
@@ -172,7 +215,12 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
   backButton: { minHeight: MIN_TOUCH_TARGET, justifyContent: 'center', marginBottom: spacing.xs },
   backText: { ...typography.label, fontSize: 15 },
-  profile: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
+  profile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+  },
   profileCopy: { flex: 1, gap: spacing.xs },
   name: { fontSize: 22, fontWeight: '700' },
   company: { ...typography.body },

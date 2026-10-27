@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+} from 'react-native';
 
 import { ActionButton, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
 import { useTheme } from '@/components/ui';
@@ -42,18 +49,38 @@ export default function EditLeadScreen() {
 
   return (
     <SalesScreen padded={false}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <PageHeading title="Edit lead" subtitle="Update the details you have." />
           <PreviewNotice />
-          {!lead ? <Text style={[styles.error, { color: theme.danger }]}>Lead not found.</Text> : null}
+          {!lead ? (
+            <Text style={[styles.error, { color: theme.danger }]}>Lead not found.</Text>
+          ) : null}
           {[
             { label: 'Name *', value: name, change: setName, placeholder: 'Lead name' },
-            { label: 'Business', value: company, change: setCompany, placeholder: 'Business or company' },
+            {
+              label: 'Business',
+              value: company,
+              change: setCompany,
+              placeholder: 'Business or company',
+            },
             { label: 'Email', value: email, change: setEmail, placeholder: 'Email address' },
             { label: 'Phone', value: phone, change: setPhone, placeholder: 'Phone number' },
-            { label: 'Source', value: source, change: setSource, placeholder: 'Referral, website…' },
-            { label: 'Need or context', value: summary, change: setSummary, placeholder: 'What are they looking for?' },
+            {
+              label: 'Source',
+              value: source,
+              change: setSource,
+              placeholder: 'Referral, website…',
+            },
+            {
+              label: 'Need or context',
+              value: summary,
+              change: setSummary,
+              placeholder: 'What are they looking for?',
+            },
           ].map((field) => (
             <TextInput
               key={field.label}
@@ -62,10 +89,17 @@ export default function EditLeadScreen() {
               onChangeText={field.change}
               placeholder={field.placeholder}
               placeholderTextColor={theme.textSecondary}
-              style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+              style={[
+                styles.input,
+                { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+              ]}
             />
           ))}
-          {error ? <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>{error}</Text> : null}
+          {error ? (
+            <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>
+              {error}
+            </Text>
+          ) : null}
           <ActionButton label="Save preview changes" onPress={save} disabled={!lead} />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -76,6 +110,13 @@ export default function EditLeadScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl },
-  input: { minHeight: 48, borderWidth: 1, borderRadius: radius.md, padding: spacing.md, marginBottom: spacing.md, fontSize: 15 },
+  input: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginBottom: spacing.md,
+    fontSize: 15,
+  },
   error: { ...typography.caption, marginBottom: spacing.md },
 });

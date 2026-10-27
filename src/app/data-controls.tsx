@@ -12,39 +12,48 @@ export default function DataControlsScreen() {
       action === 'export' ? 'Export not connected' : 'Deletion not connected',
       action === 'export'
         ? 'No export has been created. Secure workspace export will be implemented after tenant isolation.'
-        : 'No account or workspace has been deleted. The secure deletion workflow will be implemented after tenant isolation.'
+        : 'No account or workspace has been deleted. The secure deletion workflow will be implemented after tenant isolation.',
     );
   }
 
   return (
     <SalesScreen padded={false}>
       <ScrollView contentContainerStyle={styles.content}>
-        <PageHeading title="Data controls" subtitle="Understand what is available in this UI preview." />
+        <PageHeading
+          title="Data controls"
+          subtitle="Understand what is available in this UI preview."
+        />
         <PreviewNotice />
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.heading, { color: theme.text }]}>Export your workspace</Text>
           <Text style={[styles.body, { color: theme.textSecondary }]}>
-            A production export should include your workspace, leads, notes, and follow-ups in a portable format.
+            A production export should include your workspace, leads, notes, and follow-ups in a
+            portable format.
           </Text>
           <Pressable
             accessibilityRole="button"
             onPress={() => explainUnavailable('export')}
             style={[styles.button, { borderColor: theme.border }]}
           >
-            <Text style={[styles.buttonText, { color: theme.accent }]}>Check export availability</Text>
+            <Text style={[styles.buttonText, { color: theme.accent }]}>
+              Check export availability
+            </Text>
           </Pressable>
         </View>
         <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <Text style={[styles.heading, { color: theme.text }]}>Delete your account</Text>
           <Text style={[styles.body, { color: theme.textSecondary }]}>
-            Account deletion must verify ownership, explain which workspace data is affected, and complete securely. This preview will not delete anything.
+            Account deletion must verify ownership, explain which workspace data is affected, and
+            complete securely. This preview will not delete anything.
           </Text>
           <Pressable
             accessibilityRole="button"
             onPress={() => explainUnavailable('delete')}
             style={[styles.button, { borderColor: theme.danger }]}
           >
-            <Text style={[styles.buttonText, { color: theme.danger }]}>Review deletion requirements</Text>
+            <Text style={[styles.buttonText, { color: theme.danger }]}>
+              Review deletion requirements
+            </Text>
           </Pressable>
         </View>
         <Text style={[styles.disclaimer, { color: theme.textSecondary }]}>
@@ -60,7 +69,15 @@ const styles = StyleSheet.create({
   card: { padding: spacing.lg, borderWidth: 1, borderRadius: radius.lg, marginBottom: spacing.md },
   heading: { ...typography.heading, marginBottom: spacing.sm },
   body: { ...typography.body, lineHeight: 22 },
-  button: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start', borderWidth: 1, borderRadius: radius.md, paddingHorizontal: spacing.md, marginTop: spacing.lg },
+  button: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.lg,
+  },
   buttonText: { ...typography.label },
   disclaimer: { ...typography.caption, lineHeight: 18, marginTop: spacing.sm },
 });

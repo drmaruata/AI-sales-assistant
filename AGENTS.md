@@ -2,7 +2,7 @@
 
 ## Current state and architecture
 
-The repository is no longer documentation-only. Slice 1 (project foundation) exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. Slice 2 now has a local Supabase migration for workspaces, memberships, RLS, and atomic workspace creation, plus pgTAP tests. The migration has not been applied to a hosted database, and tenant-owned product tables and their policies are not implemented yet; do not claim tenant isolation is end-to-end.
+The repository is no longer documentation-only. Slice 1 (project foundation) exists as an Expo SDK 58 app: strict TypeScript, environment parsing, a Supabase client with persisted sessions, sign-in and sign-up screens, session state, Expo Router navigation, and design tokens. Slice 2 adds workspace/membership migrations, RLS, atomic workspace creation, and pgTAP tests; the workspace migration is applied to the linked production project by owner decision. Tenant-owned product tables and their policies are not implemented yet; do not claim tenant isolation is end-to-end.
 
 The product is an Android-first Expo + React Native + TypeScript app. Supabase Auth and Postgres provide authentication and data storage; Postgres Row Level Security (RLS), using workspace membership as the authorization source of truth, enforces tenant isolation. Use Supabase Edge Functions for privileged operations and AI provider calls. Keep the client untrusted and thin. AI output is an editable, human-reviewed draft; it is not sent automatically.
 
@@ -30,20 +30,25 @@ npm install                # install dependencies
 npm start                  # Expo dev server
 npm run android            # dev server targeting Android
 npm run lint              # ESLint
+npm run format:check      # Prettier
 npm run typecheck         # tsc --noEmit
 npm test                  # unit tests (node --test, no extra framework)
 npm run doctor             # npx expo-doctor
+npm run db:start          # local Supabase stack (Docker required)
+npm run db:reset          # reset local database only
+npm run db:test            # pgTAP tests against local database only
 npx expo export --platform android --output-dir dist   # production bundle check
 ```
 
-Run `npm run lint`, `npm run typecheck`, and `npm test` before declaring any task done. Report exact commands and actual outcomes. If a test cannot run because an external service or credential is missing, state the exact blocker and provide a manual verification procedure. Do not claim a test passed without running it.
+Run `npm run lint`, `npm run format:check`, `npm run typecheck`, and `npm test` before declaring any task done. When database changes are involved, also run the local Supabase pgTAP suite if Docker is available. Report exact commands and actual outcomes. If a test cannot run because an external service or credential is missing, state the exact blocker and provide a manual verification procedure. Do not claim a test passed without running it.
 
 Notes that cost time to discover:
+
 - Tests use the built-in `node --test` runner and Node's TypeScript stripping, so test files import with a literal `.ts` extension and `tsconfig.json` sets `allowImportingTsExtensions`, `noEmit`, and `types: ["node"]`. Keep those in sync or typecheck breaks.
 - `npm run lint` runs `npx eslint .` directly. `expo lint` fails on this project because it rejects the ESLint 9 version that `expo lint` itself installs.
 - `app.json` sets `web.output` to `single`, not `server`. With `server`, Expo renders the app in Node for SSR, and `useColorScheme()` resolves to `light` there while the browser reports `dark`, which produces a React hydration mismatch on every colored surface. Keep `single` unless SSR is genuinely needed and the theme is made deterministic first.
 - Creating the Supabase client at module import time crashes SSR, because Supabase runs auth initialisation as an import side effect and AsyncStorage needs a `window`. Use `getSupabaseClient()` from `src/lib/supabase.ts`, which creates the client on first call. Do not re-add a module-level `export const supabase = createClient(...)`.
-- The Expo CLI exports every variable in `.env` into the dev-server shell, including `SUPABASE_SECRET_KEY`. That is why the browser tool reaches the app at `http://127.0.0.1:8081/` and not `http://localhost:8081/`.
+- The Expo CLI exports every variable in root `.env` into the dev-server shell. That is why the browser tool reaches the app at `http://127.0.0.1:8081/` and not `http://localhost:8081/`; keep server secrets out of that file.
 - `dist/`, `node_modules/`, `.expo/`, `android/`, and `ios/` are generated and git-ignored. Do not edit native folders by hand; configure native behavior in `app.json` and config plugins.
 
 ### Known dependency advisories
@@ -52,12 +57,13 @@ Notes that cost time to discover:
 
 ## Environment and secrets
 
-`.env` holds real credentials and is git-ignored. `.env.example` is the tracked template; keep the two aligned in naming.
+The root `.env` is git-ignored and now contains client-safe Expo configuration only. `.env.example` is the tracked template for it; keep the two aligned in naming.
 
 - Only `EXPO_PUBLIC_*` variables reach app code. Expo inlines those into the bundle, so they must be non-secret. The publishable key is safe to ship; the secret key is not.
-- `SUPABASE_SECRET_KEY`, `SUPABASE_URL`, and `SUPABASE_JWKS_URL` are server-side values for Edge Functions and never move into an `EXPO_PUBLIC_*` name.
-- `src/lib/env.ts` validates client variables with Zod at import time, and `src/lib/supabase.ts` throws a message naming the missing variable rather than running unauthenticated. Keep that behaviour: never read `process.env.SUPABASE_SECRET_KEY` in app code.
-- The Expo CLI loads `.env` and exports its variables into the dev-server shell, including `SUPABASE_SECRET_KEY`. Treat that process environment as sensitive.
+- The root `.env` must contain only client-safe Expo settings. Expo loads all root `.env` variables into its dev-server process, not only `EXPO_PUBLIC_*`.
+- Supabase Edge Function local secrets belong in ignored `supabase/functions/.env`; hosted secrets belong in the project's Supabase secret store. Supabase reserves custom secret names beginning with `SUPABASE_`; use platform-injected Supabase configuration and non-reserved names for application secrets.
+- `src/lib/env.ts` validates client variables with Zod at import time, and `src/lib/supabase.ts` throws a message naming the missing variable rather than running unauthenticated. Keep that behaviour; never read server-only secrets in app code.
+- CI uses placeholder public configuration only; it must not require production credentials.
 
 ## Repository-specific requirements
 

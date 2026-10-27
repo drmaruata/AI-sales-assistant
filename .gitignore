@@ -46,3 +46,8 @@ Thumbs.db
 
 # Local image references
 /image_reference/
+
+# Supabase Edge Function local secrets
+/supabase/functions/.env
+/supabase/functions/.env.*
+!/supabase/functions/.env.example

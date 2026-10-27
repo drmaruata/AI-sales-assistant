@@ -7,7 +7,7 @@ describe('toUserMessage', () => {
   it('maps a known Supabase error code to a safe message', () => {
     assert.equal(
       toUserMessage({ code: 'invalid_credentials', message: 'Invalid login credentials' }),
-      'The email or password is incorrect.'
+      'The email or password is incorrect.',
     );
   });
 
@@ -24,7 +24,10 @@ describe('toUserMessage', () => {
   });
 
   it('passes through AppError messages', () => {
-    assert.equal(toUserMessage(new AppError('VALIDATION_ERROR', 'Check the fields.')), 'Check the fields.');
+    assert.equal(
+      toUserMessage(new AppError('VALIDATION_ERROR', 'Check the fields.')),
+      'Check the fields.',
+    );
   });
 
   it('handles null and undefined without throwing', () => {

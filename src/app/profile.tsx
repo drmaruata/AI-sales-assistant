@@ -16,16 +16,23 @@ export default function ProfileScreen() {
       <PreviewNotice />
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.label, { color: theme.textSecondary }]}>Email</Text>
-        <Text style={[styles.value, { color: theme.text }]}>{session?.user.email ?? 'No signed-in account'}</Text>
+        <Text style={[styles.value, { color: theme.text }]}>
+          {session?.user.email ?? 'No signed-in account'}
+        </Text>
       </View>
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Text style={[styles.label, { color: theme.textSecondary }]}>Workspace</Text>
         <Text style={[styles.value, { color: theme.text }]}>Sample workspace</Text>
         <Text style={[styles.description, { color: theme.textSecondary }]}>
-          Workspace membership and profile editing will be available after the secure tenant foundation is implemented.
+          Workspace membership and profile editing will be available after the secure tenant
+          foundation is implemented.
         </Text>
       </View>
-      <ActionButton label="Back to settings" onPress={() => router.replace('/(tabs)/settings')} secondary />
+      <ActionButton
+        label="Back to settings"
+        onPress={() => router.replace('/(tabs)/settings')}
+        secondary
+      />
     </SalesScreen>
   );
 }

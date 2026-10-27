@@ -1,0 +1,8 @@
+node_modules
+.expo
+.git
+dist
+coverage
+package-lock.json
+image_reference
+image reference

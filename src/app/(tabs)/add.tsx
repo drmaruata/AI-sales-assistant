@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { router } from 'expo-router';
 
 import { ActionButton, PageHeading, PreviewNotice, SalesScreen } from '@/components/sales-ui';
@@ -46,7 +54,10 @@ export default function AddLeadScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <PageHeading title="Add a lead" subtitle="Capture the basics. You can add details later." />
+          <PageHeading
+            title="Add a lead"
+            subtitle="Capture the basics. You can add details later."
+          />
           <PreviewNotice />
           <View style={[styles.notice, { backgroundColor: theme.accentSoft }]}>
             <Text style={[styles.noticeText, { color: theme.accent }]}>
@@ -65,14 +76,19 @@ export default function AddLeadScreen() {
             placeholder="e.g. Priya Sharma"
             placeholderTextColor={theme.textSecondary}
             returnKeyType="next"
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[
+              styles.input,
+              { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+            ]}
           />
           {error ? (
             <Text accessibilityRole="alert" style={[styles.error, { color: theme.danger }]}>
               {error}
             </Text>
           ) : null}
-          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>Business (optional)</Text>
+          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>
+            Business (optional)
+          </Text>
           <TextInput
             accessibilityLabel="Business name"
             autoCapitalize="words"
@@ -81,9 +97,14 @@ export default function AddLeadScreen() {
             placeholder="Business or company"
             placeholderTextColor={theme.textSecondary}
             returnKeyType="next"
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[
+              styles.input,
+              { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+            ]}
           />
-          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>Phone or email (optional)</Text>
+          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>
+            Phone or email (optional)
+          </Text>
           <TextInput
             accessibilityLabel="Lead phone or email"
             value={contact}
@@ -92,18 +113,28 @@ export default function AddLeadScreen() {
             placeholderTextColor={theme.textSecondary}
             keyboardType="email-address"
             autoCapitalize="none"
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[
+              styles.input,
+              { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+            ]}
           />
-          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>How did they find you? (optional)</Text>
+          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>
+            How did they find you? (optional)
+          </Text>
           <TextInput
             accessibilityLabel="Lead source"
             value={source}
             onChangeText={setSource}
             placeholder="e.g. Referral, website"
             placeholderTextColor={theme.textSecondary}
-            style={[styles.input, { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text }]}
+            style={[
+              styles.input,
+              { backgroundColor: theme.surface, borderColor: theme.border, color: theme.text },
+            ]}
           />
-          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>What are they looking for? (optional)</Text>
+          <Text style={[styles.label, styles.optionalLabel, { color: theme.text }]}>
+            What are they looking for? (optional)
+          </Text>
           <TextInput
             accessibilityLabel="Lead note"
             value={summary}

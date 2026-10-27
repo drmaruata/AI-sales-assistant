@@ -18,8 +18,7 @@ export type ClientEnv = z.infer<typeof clientEnvSchema>;
 function readClientEnv(): ClientEnv | null {
   const parsed = clientEnvSchema.safeParse({
     EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
-    EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
-      process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     EXPO_PUBLIC_SUPABASE_JWKS_URL: process.env.EXPO_PUBLIC_SUPABASE_JWKS_URL,
   });
   return parsed.success ? parsed.data : null;

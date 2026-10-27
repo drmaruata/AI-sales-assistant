@@ -22,6 +22,7 @@ The MVP is not a full CRM, call-centre system, marketing automation platform, or
 Small businesses often receive enquiries across calls, forms, social channels, and messaging apps. Follow-up details are scattered across notes and chat history. Owners may forget to respond, lose context, or send inconsistent answers. Existing CRMs may be too complex or expensive for very small teams.
 
 The product will help users:
+
 - record a lead in seconds;
 - understand the lead's current stage and next action;
 - receive timely follow-up reminders;
@@ -31,6 +32,7 @@ The product will help users:
 ## 4. Goals
 
 ### MVP goals
+
 1. A user can create an account and workspace.
 2. A user can add, view, edit, search, and archive leads.
 3. A user can move a lead through a configurable but initially fixed pipeline.
@@ -42,6 +44,7 @@ The product will help users:
 9. The product can be piloted with a small number of real businesses without manual database edits.
 
 ### Non-goals for MVP
+
 - Unofficial WhatsApp automation or scraping.
 - Autonomous outbound messaging.
 - Full email inbox synchronization.
@@ -54,17 +57,21 @@ The product will help users:
 ## 5. Target users and personas
 
 ### Persona A: Owner-operator
+
 Runs a small business and personally responds to enquiries. Needs quick capture, reminders, and simple reports.
 
 ### Persona B: Sales representative
+
 Handles a daily list of leads. Needs a clear next-action queue, lead history, and consistent messaging.
 
 ### Persona C: Small-team manager
+
 Needs visibility into pipeline activity and follow-up completion. Team assignment and manager reporting may be a post-MVP feature.
 
 ## 6. Initial target market
 
 Choose one beachhead segment for the first 10–20 customer interviews and first paid pilots. Candidate segments:
+
 - coaching/training centres;
 - real-estate agents;
 - home and professional services;
@@ -92,6 +99,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 ## 9. MVP scope
 
 ### P0 — required for pilot
+
 - Email/password or supported Supabase Auth sign-in.
 - Workspace creation and membership.
 - Lead CRUD, search, filters, archive.
@@ -108,6 +116,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 - Privacy policy, terms, support contact, and clear AI disclosure before public launch.
 
 ### P1 — after pilot evidence
+
 - CSV import/export.
 - Team members and lead assignment.
 - Saved reply templates.
@@ -118,6 +127,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 - Subscription management after billing policy review.
 
 ### P2 — defer until product-market evidence
+
 - Shared inbox integrations.
 - Automated lead capture from forms.
 - Email integration.
@@ -128,6 +138,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 ## 10. User journeys
 
 ### Journey A: Add and follow up
+
 1. User opens app.
 2. Taps “Add lead”.
 3. Enters name or business name, contact method, source, need, and optional notes.
@@ -138,6 +149,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 8. User records the outcome and schedules the next action or marks the lead Won/Lost.
 
 ### Journey B: Generate an AI draft
+
 1. User opens a lead.
 2. Taps “Draft reply”.
 3. Chooses purpose (first response, follow-up, answer a question, re-engagement) and tone.
@@ -147,6 +159,7 @@ Do not market to every segment simultaneously. Use discovery interviews to ident
 7. User manually sends it through their chosen channel and records the interaction if desired.
 
 ### Journey C: Daily review
+
 1. User opens dashboard.
 2. Sees overdue follow-ups, due today, open leads, and stage counts.
 3. Opens a due lead.
@@ -172,17 +185,20 @@ See `SRS.md` for uniquely identified requirements. P0 areas include authenticati
 ## 13. Success metrics
 
 ### Activation
+
 - Percentage of sign-ups that create at least 5 leads in 24 hours.
 - Time from account creation to first lead.
 - Percentage generating a first AI draft.
 
 ### Engagement
+
 - Weekly active workspaces.
 - Leads with a next action.
 - Follow-ups completed on or before due date.
 - AI drafts accepted/copied versus generated.
 
 ### Business
+
 - Pilot-to-paid conversion.
 - Monthly recurring revenue (MRR), reported separately from cash collected.
 - Logo churn and revenue churn.
@@ -190,6 +206,7 @@ See `SRS.md` for uniquely identified requirements. P0 areas include authenticati
 - Customer acquisition cost (CAC) and payback period.
 
 ### Quality
+
 - Crash-free sessions.
 - AI error rate and latency.
 - Reminder delivery success where measurable.
@@ -222,6 +239,7 @@ Before enabling in-app digital subscriptions, review current Google Play and App
 ## 16. Release acceptance criteria
 
 MVP can enter a paid pilot when:
+
 - all P0 acceptance criteria in `SRS.md` pass;
 - RLS and tenant isolation tests pass;
 - no known critical/high severity security issue remains unresolved;

@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 import {
   initialBusinessProfile,
@@ -22,7 +15,10 @@ type PreviewLeadsContextValue = {
   leads: Lead[];
   followUps: FollowUp[];
   businessProfile: BusinessProfile;
-  addLead: (values: Pick<Lead, 'name' | 'company' | 'summary'> & Partial<Pick<Lead, 'email' | 'phone' | 'source'>>) => Lead;
+  addLead: (
+    values: Pick<Lead, 'name' | 'company' | 'summary'> &
+      Partial<Pick<Lead, 'email' | 'phone' | 'source'>>,
+  ) => Lead;
   updateLead: (id: string, updates: Partial<Omit<Lead, 'id'>>) => void;
   updateStage: (id: string, stage: LeadStage) => void;
   addNote: (id: string, text: string) => void;
@@ -41,27 +37,33 @@ export function PreviewLeadsProvider({ children }: { children: ReactNode }) {
   const [followUps, setFollowUps] = useState(initialPreviewFollowUps);
   const [businessProfile, setBusinessProfile] = useState(initialBusinessProfile);
 
-  const addLead = useCallback((values: Pick<Lead, 'name' | 'company' | 'summary'> & Partial<Pick<Lead, 'email' | 'phone' | 'source'>>) => {
-    const lead: Lead = {
-      id: `preview-${Date.now()}`,
-      name: values.name.trim(),
-      company: values.company.trim() || 'Independent',
-      stage: 'New',
-      summary: values.summary.trim() || 'No notes added yet.',
-      updated: 'Just now',
-      followUp: null,
-      email: values.email?.trim() || undefined,
-      phone: values.phone?.trim() || undefined,
-      source: values.source?.trim() || undefined,
-      notes: [],
-    };
-    setLeads((current) => [lead, ...current]);
-    return lead;
-  }, []);
+  const addLead = useCallback(
+    (
+      values: Pick<Lead, 'name' | 'company' | 'summary'> &
+        Partial<Pick<Lead, 'email' | 'phone' | 'source'>>,
+    ) => {
+      const lead: Lead = {
+        id: `preview-${Date.now()}`,
+        name: values.name.trim(),
+        company: values.company.trim() || 'Independent',
+        stage: 'New',
+        summary: values.summary.trim() || 'No notes added yet.',
+        updated: 'Just now',
+        followUp: null,
+        email: values.email?.trim() || undefined,
+        phone: values.phone?.trim() || undefined,
+        source: values.source?.trim() || undefined,
+        notes: [],
+      };
+      setLeads((current) => [lead, ...current]);
+      return lead;
+    },
+    [],
+  );
 
   const updateLead = useCallback((id: string, updates: Partial<Omit<Lead, 'id'>>) => {
     setLeads((current) =>
-      current.map((lead) => (lead.id === id ? { ...lead, ...updates, updated: 'Just now' } : lead))
+      current.map((lead) => (lead.id === id ? { ...lead, ...updates, updated: 'Just now' } : lead)),
     );
   }, []);
 
@@ -80,7 +82,7 @@ export function PreviewLeadsProvider({ children }: { children: ReactNode }) {
           notes: [note, ...(lead.notes ?? [])],
           updated: 'Just now',
         };
-      })
+      }),
     );
   }, []);
 
@@ -90,29 +92,31 @@ export function PreviewLeadsProvider({ children }: { children: ReactNode }) {
       current.map((lead) =>
         lead.id === id
           ? { ...lead, notes: [note, ...(lead.notes ?? [])], updated: 'Just now' }
-          : lead
-      )
+          : lead,
+      ),
     );
   }, []);
 
   const archiveLead = useCallback((id: string) => {
     setLeads((current) =>
       current.map((lead) =>
-        lead.id === id ? { ...lead, archived: true, followUp: null, updated: 'Just now' } : lead
-      )
+        lead.id === id ? { ...lead, archived: true, followUp: null, updated: 'Just now' } : lead,
+      ),
     );
     setFollowUps((current) =>
       current.map((followUp) =>
         followUp.leadId === id && followUp.status === 'Pending'
           ? { ...followUp, status: 'Cancelled' }
-          : followUp
-      )
+          : followUp,
+      ),
     );
   }, []);
 
   const restoreLead = useCallback((id: string) => {
     setLeads((current) =>
-      current.map((lead) => (lead.id === id ? { ...lead, archived: false, updated: 'Just now' } : lead))
+      current.map((lead) =>
+        lead.id === id ? { ...lead, archived: false, updated: 'Just now' } : lead,
+      ),
     );
   }, []);
 
@@ -126,43 +130,58 @@ export function PreviewLeadsProvider({ children }: { children: ReactNode }) {
     setFollowUps((current) => [followUp, ...current]);
     setLeads((current) =>
       current.map((lead) =>
-        lead.id === leadId ? { ...lead, followUp: due.trim(), updated: 'Just now' } : lead
-      )
+        lead.id === leadId ? { ...lead, followUp: due.trim(), updated: 'Just now' } : lead,
+      ),
     );
   }, []);
 
-  const updateFollowUpStatus = useCallback((id: string, status: FollowUp['status']) => {
-    const target = followUps.find((followUp) => followUp.id === id);
-    setFollowUps((current) =>
-      current.map((followUp) => (followUp.id === id ? { ...followUp, status } : followUp))
-    );
-    if (target) {
-      const nextPending = followUps.find(
-        (followUp) => followUp.id !== id && followUp.leadId === target.leadId && followUp.status === 'Pending'
+  const updateFollowUpStatus = useCallback(
+    (id: string, status: FollowUp['status']) => {
+      const target = followUps.find((followUp) => followUp.id === id);
+      setFollowUps((current) =>
+        current.map((followUp) => (followUp.id === id ? { ...followUp, status } : followUp)),
       );
-      setLeads((current) =>
-        current.map((lead) =>
-          lead.id === target.leadId && lead.followUp === target.due
-            ? { ...lead, followUp: status === 'Pending' ? target.due : nextPending?.due ?? null, updated: 'Just now' }
-            : lead
-        )
-      );
-    }
-  }, [followUps]);
+      if (target) {
+        const nextPending = followUps.find(
+          (followUp) =>
+            followUp.id !== id &&
+            followUp.leadId === target.leadId &&
+            followUp.status === 'Pending',
+        );
+        setLeads((current) =>
+          current.map((lead) =>
+            lead.id === target.leadId && lead.followUp === target.due
+              ? {
+                  ...lead,
+                  followUp: status === 'Pending' ? target.due : (nextPending?.due ?? null),
+                  updated: 'Just now',
+                }
+              : lead,
+          ),
+        );
+      }
+    },
+    [followUps],
+  );
 
-  const rescheduleFollowUp = useCallback((id: string, due: string) => {
-    setFollowUps((current) =>
-      current.map((followUp) => (followUp.id === id ? { ...followUp, due: due.trim() } : followUp))
-    );
-    const current = followUps.find((followUp) => followUp.id === id);
-    setLeads((currentLeads) =>
-      currentLeads.map((lead) =>
-        current && lead.id === current.leadId && lead.followUp === current.due
-          ? { ...lead, followUp: due.trim(), updated: 'Just now' }
-          : lead
-      )
-    );
-  }, [followUps]);
+  const rescheduleFollowUp = useCallback(
+    (id: string, due: string) => {
+      setFollowUps((current) =>
+        current.map((followUp) =>
+          followUp.id === id ? { ...followUp, due: due.trim() } : followUp,
+        ),
+      );
+      const current = followUps.find((followUp) => followUp.id === id);
+      setLeads((currentLeads) =>
+        currentLeads.map((lead) =>
+          current && lead.id === current.leadId && lead.followUp === current.due
+            ? { ...lead, followUp: due.trim(), updated: 'Just now' }
+            : lead,
+        ),
+      );
+    },
+    [followUps],
+  );
 
   const updateBusinessProfile = useCallback((profile: BusinessProfile) => {
     setBusinessProfile(profile);
@@ -198,7 +217,7 @@ export function PreviewLeadsProvider({ children }: { children: ReactNode }) {
       rescheduleFollowUp,
       updateFollowUpStatus,
       updateBusinessProfile,
-    ]
+    ],
   );
 
   return <PreviewLeadsContext.Provider value={value}>{children}</PreviewLeadsContext.Provider>;

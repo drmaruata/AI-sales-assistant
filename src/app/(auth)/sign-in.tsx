@@ -96,9 +96,7 @@ export default function SignInScreen() {
         />
 
         <View style={styles.footer}>
-          <Text style={[styles.footerText, { color: theme.textSecondary }]}>
-            No account yet?
-          </Text>
+          <Text style={[styles.footerText, { color: theme.textSecondary }]}>No account yet?</Text>
           <Link href="/(auth)/sign-up" style={[styles.link, { color: theme.accent }]}>
             Create one
           </Link>
@@ -116,6 +114,19 @@ const styles = StyleSheet.create({
   footer: { flexDirection: 'row', gap: 8, marginTop: 24, alignItems: 'center' },
   footerText: { fontSize: 14 },
   link: { fontSize: 14, fontWeight: '600' },
-  forgotLink: { alignSelf: 'flex-end', minHeight: 44, textAlignVertical: 'center', fontSize: 13, fontWeight: '600' },
-  previewLink: { alignSelf: 'center', marginTop: 16, minHeight: 44, textAlignVertical: 'center', fontSize: 13, fontWeight: '600' },
+  forgotLink: {
+    alignSelf: 'flex-end',
+    minHeight: 44,
+    textAlignVertical: 'center',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  previewLink: {
+    alignSelf: 'center',
+    marginTop: 16,
+    minHeight: 44,
+    textAlignVertical: 'center',
+    fontSize: 13,
+    fontWeight: '600',
+  },
 });
